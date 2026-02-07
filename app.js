@@ -1,3 +1,4 @@
+// Express app setup and core middleware
 import express from 'express';
 
 import indexRoutes from './routes/indexRoutes.js';
@@ -11,3 +12,5 @@ app.use(express.static('public'));
 app.use('/', indexRoutes);
 
 export default app;
+
+

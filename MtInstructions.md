@@ -21,9 +21,9 @@ This project aims to assess your understanding of:
 - [ ] Create routes for CRUD operations related to notes.
 
 ### Database + Models
-- [ ] Choose and set up a database (e.g., MongoDB) to store note data.
-- [ ] Connect your Node.js application to the chosen database.
-- [ ] Implement data models and use them to interact with the database.
+- [x] Choose and set up a database (e.g., MongoDB) to store note data.
+- [x] Connect your Node.js application to the chosen database.
+- [x] Implement data models and use them to interact with the database.
 
 ### REST API + Error Handling
 - [ ] Create RESTful API endpoints for managing notes:
