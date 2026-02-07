@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test"
+    "test": "mocha \"tests/**/*.test.js\""
   },
   "keywords": [],
   "author": "",
@@ -15,5 +15,9 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "mongoose": "^9.1.6"
+  },
+  "devDependencies": {
+    "chai": "^5.2.0",
+    "mocha": "^11.1.0"
   }
 }

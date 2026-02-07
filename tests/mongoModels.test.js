@@ -1,6 +1,6 @@
-// Integration test for MongoDB models: User and Note
-import test, { after, before } from 'node:test';
-import assert from 'node:assert/strict';
+// Integration test for MongoDB models: User and Note (Mocha + Chai)
+import { after, before, describe, it } from 'mocha';
+import { expect } from 'chai';
 
 import mongoose from 'mongoose';
 import User from '../models/User.js';
@@ -21,29 +21,31 @@ after(async () => {
   await mongoose.disconnect();
 });
 
-// Test: create a User and a Note, then verify
-test('Mongo: can create a User and Note', async () => {
-  // Create a new user
-  const user = await User.create({
-    username: 'Cory_123',
-    usernameLower: 'cory_123',
-    email: 'test@example.com',
-    emailLower: 'test@example.com',
-    passwordHash: 'not-a-real-hash-yet',
+describe('Mongo models', () => {
+  it('can create a User and Note', async () => {
+    // Create a new user
+    const user = await User.create({
+      username: 'Cory_123',
+      usernameLower: 'cory_123',
+      email: 'test@example.com',
+      emailLower: 'test@example.com',
+      passwordHash: 'not-a-real-hash-yet',
+    });
+
+    // Create a note for the user
+    const note = await Note.create({
+      userId: user._id,
+      title: 'First note',
+      content: 'Hello world',
+    });
+
+    // Check that both user and note were created
+    expect(user._id).to.exist;
+    expect(note._id).to.exist;
+
+    // Find the note by userId and check its title
+    const found = await Note.findOne({ userId: user._id });
+    expect(found).to.exist;
+    expect(found.title).to.equal('First note');
   });
-
-  // Create a note for the user
-  const note = await Note.create({
-    userId: user._id,
-    title: 'First note',
-    content: 'Hello world',
-  });
-
-  // Check that both user and note were created
-  assert.ok(user._id);
-  assert.ok(note._id);
-
-  // Find the note by userId and check its title
-  const found = await Note.findOne({ userId: user._id });
-  assert.equal(found.title, 'First note');
 });

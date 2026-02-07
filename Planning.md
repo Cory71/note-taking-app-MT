@@ -1,7 +1,10 @@
 # Planning - Note-Taking App (Mid-Term)
 
 ## Goal
+
 Build a full-stack Note-Taking App with:
+
+- Node.js runtime environment
 - Express.js back end + REST API
 - MongoDB database
 - User authentication (Passport Local + OAuth 2.0)
@@ -11,6 +14,7 @@ Build a full-stack Note-Taking App with:
 ---
 
 ## Key Requirements
+
 - Use MVC folder structure: routes, controllers, models, views, partials (and more if needed)
 - Have BOTH `app.js` and `server.js`
 - Notes CRUD endpoints: GET, POST, PUT, DELETE
@@ -24,8 +28,8 @@ Build a full-stack Note-Taking App with:
 
 ---
 
-
 ## Decisions Locked In (so we don’t change later)
+
 - **Front end:** EJS pages using normal **form submits** + redirects (no heavy front-end framework)
 - **Notes UI:** simple pages with forms (create/edit/delete) that submit to the server
 - **Auth login field:** allow login with **username OR email** (single “usernameOrEmail” input)
@@ -41,10 +45,12 @@ Build a full-stack Note-Taking App with:
 ## Route Map (UI Pages vs REST API)
 
 Note:
+
 - UI page routes that require login will be protected by `ensureAuthPage`.
 - REST API routes under `/api` will be protected by `ensureAuthApi`.
 
 UI Pages (EJS + form submits):
+
 - `GET /` (home)
 - `GET /register`, `GET /login`
 - `GET /notes` (list + create form)
@@ -54,6 +60,7 @@ UI Pages (EJS + form submits):
 - `POST /notes/:id/delete` (delete)
 
 REST API (JSON) for requirement/testing:
+
 - `GET /api/notes`
 - `GET /api/notes/:id`
 - `POST /api/notes`
@@ -63,6 +70,7 @@ REST API (JSON) for requirement/testing:
 ---
 
 ## Project Structure (MVC)
+
 Suggested folder layout:
 
 - `server.js` (starts server + connects DB)
@@ -106,6 +114,7 @@ Suggested folder layout:
 **Goal:** project boots and responds on port 3000.
 
 Checklist:
+
 - [x] `npm init -y`
 - [x] Install core deps: `express`, `dotenv`
 - [x] Create `app.js` and `server.js`
@@ -113,6 +122,7 @@ Checklist:
 - [x] Add `PORT=3000` to `.env.example`
 
 Definition of Done:
+
 - Running `node server.js` starts the server
 - Visiting `http://localhost:3000` works
 
@@ -123,6 +133,7 @@ Definition of Done:
 **Goal:** MongoDB connection works and models exist.
 
 Checklist:
+
 - [x] Install: `mongoose`
 - [x] Connect to MongoDB in `server.js` using `process.env.MONGODB_URI`
 - [x] Create `models/User.js` (start minimal)
@@ -131,6 +142,7 @@ Checklist:
   - fields: `userId`, `title`, `content`, `createdAt`, `updatedAt`
 
 Definition of Done:
+
 - App connects to MongoDB on startup
 - I can create a Note/User in a quick script or route
 
@@ -141,6 +153,7 @@ Definition of Done:
 **Goal:** users can register/login/logout.
 
 Checklist:
+
 - [ ] Install: `express-session`, `passport`, `passport-local`, `bcrypt`
 - [ ] Configure sessions
 - [ ] Session cookie settings (simple defaults): `httpOnly: true`, and `secure: true` only in production
@@ -163,9 +176,11 @@ Checklist:
   - `ensureAuthApi` (return `401` JSON when logged out)
 
 Note:
+
 - It’s listed in the folder layout for completeness, but I will actually create `middleware/ensureAuth.js` during **Phase 3**.
 
 Definition of Done:
+
 - I can create an account and login
 - I can protect a test page route using `ensureAuthPage`
 
@@ -176,6 +191,7 @@ Definition of Done:
 **Goal:** REST API exists and is protected per user.
 
 Routes (example):
+
 - `GET /api/notes` → list current user’s notes
 - `GET /api/notes/:id` → get one note (owned by user)
 - `POST /api/notes` → create note
@@ -183,6 +199,7 @@ Routes (example):
 - `DELETE /api/notes/:id` → delete note
 
 Checklist:
+
 - [ ] Build `routes/noteApiRoutes.js`
 - [ ] Build `controllers/noteController.js`
 - [ ] Protect all note API routes with `ensureAuthApi`
@@ -191,12 +208,14 @@ Checklist:
 - [ ] Add consistent JSON error responses using one shape: `res.status(code).json({ error: { message } })`
 
 Note:
+
 - `GET` requests usually have **no body** (just read the JSON response).
 - `POST` and `PUT` will send JSON with `Content-Type: application/json`.
 - `DELETE /api/notes/:id` usually has **no body** (the id is in the URL).
 - These endpoints are mainly for requirement/testing (ex: Postman). The UI pages will use normal form submits.
 
 Definition of Done:
+
 - CRUD works in Postman
 - A user cannot access another user’s notes
 
@@ -207,10 +226,12 @@ Definition of Done:
 **Goal:** bad input gives clear messages.
 
 Validation examples:
+
 - title required (min length 1)
 - content optional or required (my choice)
 
 Checklist:
+
 - [ ] Validate note input on create/update (for both form submits and API JSON)
 - [ ] Sanitize/normalize inputs on the server (trim strings, enforce max lengths like email ≤ 100, and normalize email/username to lowercase fields)
 - [ ] Return friendly errors (status + message)
@@ -221,11 +242,13 @@ Checklist:
   - `500` server error
 
 Note:
+
 - UI pages: show errors by re-rendering the EJS page with a simple message.
 - API: show errors with `res.status(...).json({ error: { message } })`.
 - EJS escapes output by default with `<%= %>`, which helps prevent unsafe HTML injection, but I should still trim/limit input and avoid rendering raw HTML.
 
 Definition of Done:
+
 - Invalid requests never crash the server
 - The front end can display messages from the server
 
@@ -236,9 +259,11 @@ Definition of Done:
 **Goal:** at least one third-party login works.
 
 Plan:
+
 - Implement OAuth for **Google only** (simplest path)
 
 Checklist:
+
 - [ ] Install provider strategy (example: `passport-google-oauth20`)
 - [ ] Add `.env.example` variables (client id/secret/callback URL)
 - [ ] Add routes:
@@ -247,6 +272,7 @@ Checklist:
 - [ ] Link OAuth user to User model
 
 Definition of Done:
+
 - I can log in using OAuth and see my notes area
 
 ---
@@ -256,12 +282,14 @@ Definition of Done:
 **Goal:** usable UI for notes CRUD using EJS + form submits.
 
 Pages:
+
 - Home page
 - Login/Register
 - Notes list page (`/notes`)
 - Notes edit page (`/notes/:id/edit`)
 
 Checklist:
+
 - [ ] Add EJS views + partials (header/nav/footer)
 - [ ] Add Bootstrap via CDN
 - [ ] Add `public/validation.js` and include it on pages with forms (login/register/notes)
@@ -276,9 +304,11 @@ Checklist:
 - [ ] Keep UI simple and clean
 
 Definition of Done:
+
 - I can manage notes without Postman
 
 Note:
+
 - Even though the UI uses forms, the REST API endpoints still exist at `/api/notes` to satisfy the instructions.
 - For the UI routes, we use `POST` for update/delete so we don’t need extra tools like method-override.
 - `public/validation.js` is only for user experience (client-side). Server-side validation still must exist and is the real authority.
@@ -291,6 +321,7 @@ Note:
 **Goal:** project is easy to run and easy to grade.
 
 Checklist:
+
 - [ ] `README.md` includes:
   - install steps
   - `.env` variables needed
@@ -301,22 +332,23 @@ Checklist:
 - [ ] Confirm all major features work end-to-end
 
 Definition of Done:
+
 - A classmate can clone, configure `.env`, and run locally
 
 ---
 
 ## Environment Variables (.env)
+
 Example keys to plan for:
+
 - `PORT=3000`
 - `MONGODB_URI=...`
 - `SESSION_SECRET=...`
 
 OAuth (example for Google):
+
 - `GOOGLE_CLIENT_ID=...`
 - `GOOGLE_CLIENT_SECRET=...`
 - `GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback`
 
 ---
-
-
-
