@@ -4,9 +4,23 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema(
   {
     username: { type: String, required: true, trim: true },
-    usernameLower: { type: String, required: true, trim: true, lowercase: true },
+    usernameLower: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+      unique: true,
+      index: true,
+    },
     email: { type: String, required: true, trim: true },
-    emailLower: { type: String, required: true, trim: true, lowercase: true },
+    emailLower: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+      unique: true,
+      index: true,
+    },
     passwordHash: { type: String },
   },
   {

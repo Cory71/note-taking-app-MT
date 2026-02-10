@@ -154,24 +154,24 @@ Definition of Done:
 
 Checklist:
 
-- [ ] Install: `express-session`, `passport`, `passport-local`, `bcrypt`
-- [ ] Configure sessions
-- [ ] Session cookie settings (simple defaults): `httpOnly: true`, and `secure: true` only in production
-- [ ] Create Passport Local strategy
-- [ ] Hash passwords with `bcrypt` on registration and store only `passwordHash` (never store plain passwords)
-- [ ] On login, compare the provided password with `bcrypt.compare(...)`
-- [ ] Login accepts a single field: `usernameOrEmail` + `password`
-- [ ] Username login is case-insensitive (use `usernameLower` to find the user)
-- [ ] Email login is case-insensitive (use `emailLower` to find the user)
-- [ ] Registration validation: password is 6+ chars and contains at least one letter OR one number
-- [ ] Registration validation (email): trim, max length 100, store lowercase in `emailLower`, and validate with a basic email format regex (server-side)
-- [ ] Registration validation (username): trim, length rules (ex: 3–30), and allow only simple characters (letters/numbers/underscore)
-- [ ] Uniqueness: prevent duplicate accounts (unique username + unique email) and show a friendly “already exists” message
-- [ ] Create auth routes:
+- [x] Install: `express-session`, `passport`, `passport-local`, `bcrypt`
+- [x] Configure sessions
+- [x] Session cookie settings (simple defaults): `httpOnly: true`, and `secure: true` only in production
+- [x] Create Passport Local strategy
+- [x] Hash passwords with `bcrypt` on registration and store only `passwordHash` (never store plain passwords)
+- [x] On login, compare the provided password with `bcrypt.compare(...)`
+- [x] Login accepts a single field: `usernameOrEmail` + `password`
+- [x] Username login is case-insensitive (use `usernameLower` to find the user)
+- [x] Email login is case-insensitive (use `emailLower` to find the user)
+- [x] Registration validation: password is 6+ chars and contains at least one letter OR one number
+- [x] Registration validation (email): trim, max length 100, store lowercase in `emailLower`, and validate with a basic email format regex (server-side)
+- [x] Registration validation (username): trim, length rules (ex: 3–30), and allow only simple characters (letters/numbers/underscore)
+- [x] Uniqueness: prevent duplicate accounts (unique username + unique email) and show a friendly “already exists” message
+- [x] Create auth routes:
   - `GET /register`, `POST /register`
   - `GET /login`, `POST /login`
   - `POST /logout`
-- [ ] Add `middleware/ensureAuth.js`
+- [x] Add `middleware/ensureAuth.js`
   - `ensureAuthPage` (redirect to `/login` when logged out)
   - `ensureAuthApi` (return `401` JSON when logged out)
 
@@ -181,8 +181,8 @@ Note:
 
 Definition of Done:
 
-- I can create an account and login
-- I can protect a test page route using `ensureAuthPage`
+- [x] I can create an account and login
+- [x] I can protect a test page route using `ensureAuthPage`
 
 ---
 

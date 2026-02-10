@@ -1,8 +1,16 @@
 // Basic integration test for Express app root route (Mocha + Chai)
-import { describe, it } from 'mocha';
+import { before, describe, it } from 'mocha';
 import { expect } from 'chai';
 
-import app from '../app.js';
+let app;
+
+// App requires SESSION_SECRET to be set (Phase 3).
+// With ESM, static imports run before this file executes, so we dynamically import.
+before(async () => {
+  process.env.SESSION_SECRET = process.env.SESSION_SECRET || 'test_session_secret';
+  const imported = await import('../app.js');
+  app = imported.default;
+});
 
 describe('GET /', () => {
   it('returns OK', async () => {

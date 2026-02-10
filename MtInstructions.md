@@ -17,7 +17,7 @@ This project aims to assess your understanding of:
 ### Project Setup
 
 - [x] Initialize a new Node.js project.
-- [ ] Set up the project structure with folders for `routes`, `controllers`, `models`, and any other necessary components.
+- [x] Set up the project structure with folders for `routes`, `controllers`, `models`, and any other necessary components.
 
 ### Server + Routes
 
@@ -48,7 +48,7 @@ This project aims to assess your understanding of:
 
 ### Authentication + Authorization
 
-- [ ] Implement user authentication so multiple users can have personalized note collections.
+- [x] Implement user authentication so multiple users can have personalized note collections.
 - [ ] Ensure each user can only access and modify **their own** notes.
 
 ### Validation
