@@ -37,7 +37,7 @@ Build a full-stack Note-Taking App with:
 - **Email login:** NOT case sensitive (we will compare using a lowercased email)
 - **Password rules:** at least 6 characters, must include at least **one letter OR one number**, and password is case sensitive
 - **Authorization rule:** users can only **CRUD their own notes** (enforced on server)
-- **OAuth 2.0:** Google only (meets the requirement with the simplest setup)
+- **OAuth 2.0:** Auth0 only (meets the requirement with the simplest setup)
 - **API requirement:** we will still implement RESTful JSON endpoints at `/api/notes` (GET/POST/PUT/DELETE) for grading/testing.
 
 ---
@@ -200,12 +200,12 @@ Routes (example):
 
 Checklist:
 
-- [ ] Build `routes/noteApiRoutes.js`
-- [ ] Build `controllers/noteController.js`
-- [ ] Protect all note API routes with `ensureAuthApi`
-- [ ] Add ownership checks: user can only access their own notes
-- [ ] Use scoped queries in controllers (example: `{ _id: id, userId: req.user._id }`)
-- [ ] Add consistent JSON error responses using one shape: `res.status(code).json({ error: { message } })`
+- [x] Build `routes/noteApiRoutes.js`
+- [x] Build `controllers/noteController.js`
+- [x] Protect all note API routes with `ensureAuthApi`
+- [x] Add ownership checks: user can only access their own notes
+- [x] Use scoped queries in controllers (example: `{ _id: id, userId: req.user._id }`)
+- [x] Add consistent JSON error responses using one shape: `res.status(code).json({ error: { message } })`
 
 Note:
 
@@ -254,26 +254,26 @@ Definition of Done:
 
 ---
 
-### Phase 6 — OAuth 2.0 Login (Day 4–5)
+### Phase 6 — Auth0 Login (Day 4–5)
 
-**Goal:** at least one third-party login works.
+**Goal:** at least one third-party login works using Auth0.
 
 Plan:
 
-- Implement OAuth for **Google only** (simplest path)
+- Implement OAuth with **Auth0**
 
 Checklist:
 
-- [ ] Install provider strategy (example: `passport-google-oauth20`)
-- [ ] Add `.env.example` variables (client id/secret/callback URL)
+- [ ] Install Auth0 Passport strategy (example: `passport-auth0`)
+- [x] Add `.env.example` variables (Auth0 domain, client id/secret, callback URL)
 - [ ] Add routes:
-  - `GET /auth/google`
-  - `GET /auth/google/callback`
-- [ ] Link OAuth user to User model
+  - `GET /auth/auth0`
+  - `GET /auth/auth0/callback`
+- [ ] Link Auth0 user to User model
 
 Definition of Done:
 
-- I can log in using OAuth and see my notes area
+- I can log in using Auth0 and see my notes area
 
 ---
 
@@ -345,10 +345,11 @@ Example keys to plan for:
 - `MONGODB_URI=...`
 - `SESSION_SECRET=...`
 
-OAuth (example for Google):
+OAuth (Auth0):
 
-- `GOOGLE_CLIENT_ID=...`
-- `GOOGLE_CLIENT_SECRET=...`
-- `GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback`
+- `AUTH0_DOMAIN=...`
+- `AUTH0_CLIENT_ID=...`
+- `AUTH0_CLIENT_SECRET=...`
+- `AUTH0_CALLBACK_URL=http://localhost:3000/auth/auth0/callback`
 
 ---

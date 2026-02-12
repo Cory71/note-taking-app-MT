@@ -12,7 +12,7 @@ before(async () => {
   app = imported.default;
 });
 
-describe('GET /', () => {
+describe('Server root route', () => {
   it('returns OK', async () => {
     // Start the app on a random available port
     const server = app.listen(0);

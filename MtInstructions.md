@@ -22,7 +22,7 @@ This project aims to assess your understanding of:
 ### Server + Routes
 
 - [x] Implement an Express.js server to handle HTTP requests.
-- [ ] Create routes for CRUD operations related to notes.
+- [x] Create routes for CRUD operations related to notes.
 
 ### Database + Models
 
@@ -32,12 +32,12 @@ This project aims to assess your understanding of:
 
 ### REST API + Error Handling
 
-- [ ] Create RESTful API endpoints for managing notes:
+- [x] Create RESTful API endpoints for managing notes:
   - `GET`
   - `POST`
   - `PUT`
   - `DELETE`
-- [ ] Implement error handling for various scenarios (such as invalid requests or missing data).
+- [x] Implement error handling for various scenarios (such as invalid requests or missing data).
 
 ### Front End (HTML/EJS + CSS)
 
@@ -49,7 +49,7 @@ This project aims to assess your understanding of:
 ### Authentication + Authorization
 
 - [x] Implement user authentication so multiple users can have personalized note collections.
-- [ ] Ensure each user can only access and modify **their own** notes.
+- [x] Ensure each user can only access and modify **their own** notes.
 
 ### Validation
 

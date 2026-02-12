@@ -7,6 +7,7 @@ import passport from 'passport';
 import './passport.js';
 import authRoutes from './routes/authRoutes.js';
 import indexRoutes from './routes/indexRoutes.js';
+import noteApiRoutes from './routes/noteApiRoutes.js';
 
 const app = express();
 
@@ -58,6 +59,7 @@ configurePassport(app);
 
 app.use('/', indexRoutes);
 app.use('/', authRoutes);
+app.use('/api/notes', noteApiRoutes);
 
 export default app;
 
