@@ -2,8 +2,11 @@
 import Note from '../models/Note.js';
 
 // --- Input helpers ---
+const NOTE_TITLE_MAX_LENGTH = 200;
+const NOTE_CONTENT_MAX_LENGTH = 5000;
+
 function safeTrim(value) {
-  if (!value) {
+  if (typeof value !== 'string') {
     return '';
   }
 
@@ -18,6 +21,29 @@ function normalizeContent(content) {
   return safeTrim(content);
 }
 
+function normalizeNoteInput(input) {
+  return {
+    title: normalizeTitle(input?.title),
+    content: normalizeContent(input?.content),
+  };
+}
+
+function validateNoteInput(note) {
+  if (!note.title) {
+    return 'Title is required.';
+  }
+
+  if (note.title.length > NOTE_TITLE_MAX_LENGTH) {
+    return `Title must be ${NOTE_TITLE_MAX_LENGTH} characters or less.`;
+  }
+
+  if (note.content.length > NOTE_CONTENT_MAX_LENGTH) {
+    return `Content must be ${NOTE_CONTENT_MAX_LENGTH} characters or less.`;
+  }
+
+  return '';
+}
+
 // --- Response helpers ---
 function sendError(res, statusCode, message) {
   return res.status(statusCode).json({ error: { message } });
@@ -25,6 +51,10 @@ function sendError(res, statusCode, message) {
 
 function getUserId(req) {
   return req.user?._id;
+}
+
+function isOwner(note, userId) {
+  return note?.userId?.toString() === userId?.toString();
 }
 
 function isInvalidIdError(error) {
@@ -47,10 +77,14 @@ export async function getNoteById(req, res, next) {
     const userId = getUserId(req);
     const noteId = req.params.id;
 
-    const note = await Note.findOne({ _id: noteId, userId });
+    const note = await Note.findById(noteId);
 
     if (!note) {
       return sendError(res, 404, 'Note not found.');
+    }
+
+    if (!isOwner(note, userId)) {
+      return sendError(res, 403, 'You do not have access to this note.');
     }
 
     return res.json({ note });
@@ -66,17 +100,17 @@ export async function getNoteById(req, res, next) {
 export async function createNote(req, res, next) {
   try {
     const userId = getUserId(req);
-    const title = normalizeTitle(req.body.title);
-    const content = normalizeContent(req.body.content);
+    const normalizedNote = normalizeNoteInput(req.body);
+    const validationMessage = validateNoteInput(normalizedNote);
 
-    if (!title) {
-      return sendError(res, 400, 'Title is required.');
+    if (validationMessage) {
+      return sendError(res, 400, validationMessage);
     }
 
     const note = await Note.create({
       userId,
-      title,
-      content,
+      title: normalizedNote.title,
+      content: normalizedNote.content,
     });
 
     return res.status(201).json({ note });
@@ -89,24 +123,28 @@ export async function updateNote(req, res, next) {
   try {
     const userId = getUserId(req);
     const noteId = req.params.id;
-    const title = normalizeTitle(req.body.title);
-    const content = normalizeContent(req.body.content);
+    const normalizedNote = normalizeNoteInput(req.body);
+    const validationMessage = validateNoteInput(normalizedNote);
 
-    if (!title) {
-      return sendError(res, 400, 'Title is required.');
+    if (validationMessage) {
+      return sendError(res, 400, validationMessage);
     }
 
-    const note = await Note.findOneAndUpdate(
-      { _id: noteId, userId },
-      { title, content },
-      { new: true }
-    );
+    const existingNote = await Note.findById(noteId);
 
-    if (!note) {
+    if (!existingNote) {
       return sendError(res, 404, 'Note not found.');
     }
 
-    return res.json({ note });
+    if (!isOwner(existingNote, userId)) {
+      return sendError(res, 403, 'You do not have access to this note.');
+    }
+
+    existingNote.title = normalizedNote.title;
+    existingNote.content = normalizedNote.content;
+    await existingNote.save();
+
+    return res.json({ note: existingNote });
   } catch (error) {
     if (isInvalidIdError(error)) {
       return sendError(res, 404, 'Note not found.');
@@ -121,12 +159,17 @@ export async function deleteNote(req, res, next) {
     const userId = getUserId(req);
     const noteId = req.params.id;
 
-    const note = await Note.findOneAndDelete({ _id: noteId, userId });
+    const note = await Note.findById(noteId);
 
     if (!note) {
       return sendError(res, 404, 'Note not found.');
     }
 
+    if (!isOwner(note, userId)) {
+      return sendError(res, 403, 'You do not have access to this note.');
+    }
+
+    await Note.findByIdAndDelete(noteId);
     return res.json({ message: 'Note deleted.' });
   } catch (error) {
     if (isInvalidIdError(error)) {

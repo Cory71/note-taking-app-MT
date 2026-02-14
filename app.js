@@ -61,6 +61,33 @@ app.use('/', indexRoutes);
 app.use('/', authRoutes);
 app.use('/api/notes', noteApiRoutes);
 
+// --- Global error handler (friendly messages) ---
+function isApiRequest(req) {
+	return req.originalUrl?.startsWith('/api/');
+}
+
+function sendApiError(res, statusCode, message) {
+	return res.status(statusCode).json({ error: { message } });
+}
+
+function sendPageError(res, statusCode, message) {
+	return res.status(statusCode).send(message);
+}
+
+app.use((error, req, res, next) => {
+	if (!error) {
+		return next();
+	}
+
+	console.error('Unexpected error:', error);
+
+	if (isApiRequest(req)) {
+		return sendApiError(res, 500, 'Server error. Please try again.');
+	}
+
+	return sendPageError(res, 500, 'Server error. Please try again.');
+});
+
 export default app;
 
 

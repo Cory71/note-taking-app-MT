@@ -7,7 +7,7 @@ Build a full-stack Note-Taking App with:
 - Node.js runtime environment
 - Express.js back end + REST API
 - MongoDB database
-- User authentication (Passport Local + OAuth 2.0)
+- User authentication (Passport Local + Auth0)
 - Simple front end (EJS styled with Bootstrap)
 - Clear validation + error handling
 
@@ -20,7 +20,7 @@ Build a full-stack Note-Taking App with:
 - Notes CRUD endpoints: GET, POST, PUT, DELETE
 - MongoDB connection uses environment variables
 - User authentication: Passport Local Strategy
-- OAuth 2.0 third-party login options
+- Third-party login option: Auth0
 - Server-side validation + clear errors
 - Front end: plain HTML or EJS (we choose EJS)
 - Styling: CSS + Bootstrap
@@ -37,7 +37,7 @@ Build a full-stack Note-Taking App with:
 - **Email login:** NOT case sensitive (we will compare using a lowercased email)
 - **Password rules:** at least 6 characters, must include at least **one letter OR one number**, and password is case sensitive
 - **Authorization rule:** users can only **CRUD their own notes** (enforced on server)
-- **OAuth 2.0:** Auth0 only (meets the requirement with the simplest setup)
+- **Third-party login:** Auth0 only (meets the requirement with the simplest setup)
 - **API requirement:** we will still implement RESTful JSON endpoints at `/api/notes` (GET/POST/PUT/DELETE) for grading/testing.
 
 ---
@@ -75,12 +75,12 @@ Suggested folder layout:
 
 - `server.js` (starts server + connects DB)
 - `app.js` (configures Express app, middleware, routes)
-- `passport.js` (Passport config: Local + OAuth strategies)
+- `passport.js` (Passport config: Local + Auth0 strategies)
 - `middleware/`
   - `ensureAuth.js` (auth helpers: `ensureAuthPage` + `ensureAuthApi`)
 - `routes/`
   - `indexRoutes.js` (pages: `GET /`)
-  - `authRoutes.js` (login/register/logout + OAuth)
+  - `authRoutes.js` (login/register/logout + Auth0)
   - `noteRoutes.js` (notes pages: `GET /notes`, `GET /notes/:id/edit`, form submits)
   - `noteApiRoutes.js` (notes CRUD API: `/api/notes`)
 - `controllers/`
@@ -109,7 +109,7 @@ Suggested folder layout:
 
 ## Phased Plan (best build order)
 
-### Phase 1 — Setup & Baseline (Day 1)
+### Phase 1 — Setup & Baseline
 
 **Goal:** project boots and responds on port 3000.
 
@@ -128,7 +128,7 @@ Definition of Done:
 
 ---
 
-### Phase 2 — Database + Models (Day 1–2)
+### Phase 2 — Database + Models
 
 **Goal:** MongoDB connection works and models exist.
 
@@ -148,7 +148,7 @@ Definition of Done:
 
 ---
 
-### Phase 3 — Local Auth (Passport Local) (Day 2–3)
+### Phase 3 — Local Auth (Passport Local)
 
 **Goal:** users can register/login/logout.
 
@@ -186,7 +186,7 @@ Definition of Done:
 
 ---
 
-### Phase 4 — Notes API (CRUD) (Day 3)
+### Phase 4 — Notes API (CRUD)
 
 **Goal:** REST API exists and is protected per user.
 
@@ -221,36 +221,36 @@ Definition of Done:
 
 ---
 
-### Phase 5 — Validation + Error Handling (Day 3–4)
+### Phase 5 — Validation + Error Handling
 
 **Goal:** bad input gives clear messages.
 
 Validation examples:
 
-- title required (min length 1)
-- content optional or required (my choice)
+- [x] title required (min length 1)
+- [x] content optional or required (my choice: optional, but max length enforced)
 
 Checklist:
 
-- [ ] Validate note input on create/update (for both form submits and API JSON)
-- [ ] Sanitize/normalize inputs on the server (trim strings, enforce max lengths like email ≤ 100, and normalize email/username to lowercase fields)
-- [ ] Return friendly errors (status + message)
-  - `400` invalid input
-  - `401` not logged in
-  - `403` not owner
-  - `404` note not found
-  - `500` server error
+- [x] Validate note input on create/update (for both form submits and API JSON)
+- [x] Sanitize/normalize inputs on the server (trim strings, enforce max lengths like email ≤ 100, and normalize email/username to lowercase fields)
+- [x] Return friendly errors (status + message)
+  - [x] `400` invalid input
+  - [x] `401` not logged in
+  - [x] `403` not owner
+  - [x] `404` note not found
+  - [x] `500` server error
 
 Note:
 
-- UI pages: show errors by re-rendering the EJS page with a simple message.
-- API: show errors with `res.status(...).json({ error: { message } })`.
-- EJS escapes output by default with `<%= %>`, which helps prevent unsafe HTML injection, but I should still trim/limit input and avoid rendering raw HTML.
+- [ ] UI pages: show errors by re-rendering the EJS page with a simple message. (Phase 7)
+- [x] API: show errors with `res.status(...).json({ error: { message } })`.
+- [x] EJS escapes output by default with `<%= %>`, which helps prevent unsafe HTML injection, but I should still trim/limit input and avoid rendering raw HTML.
 
 Definition of Done:
 
-- Invalid requests never crash the server
-- The front end can display messages from the server
+- [x] Invalid requests never crash the server
+- [ ] The front end can display messages from the server (Phase 7)
 
 ---
 
@@ -260,7 +260,7 @@ Definition of Done:
 
 Plan:
 
-- Implement OAuth with **Auth0**
+- Implement **Auth0** login
 
 Checklist:
 
@@ -345,7 +345,7 @@ Example keys to plan for:
 - `MONGODB_URI=...`
 - `SESSION_SECRET=...`
 
-OAuth (Auth0):
+Auth0:
 
 - `AUTH0_DOMAIN=...`
 - `AUTH0_CLIENT_ID=...`

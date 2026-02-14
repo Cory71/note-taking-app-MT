@@ -12,13 +12,17 @@ const mongoUri =
 
 // Connect to the test database before running tests
 before(async () => {
-  await mongoose.connect(mongoUri);
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(mongoUri);
+  }
 });
 
 // Clean up: drop the test database and disconnect after tests
 after(async () => {
-  await mongoose.connection.dropDatabase();
-  await mongoose.disconnect();
+  if (mongoose.connection.readyState === 1) {
+    await mongoose.connection.dropDatabase();
+    await mongoose.disconnect();
+  }
 });
 
 describe('Mongo models', () => {
