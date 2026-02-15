@@ -1,6 +1,7 @@
-// Passport configuration (Local Strategy)
+// Passport configuration (Local Strategy + Auth0)
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as Auth0Strategy } from 'passport-auth0';
 import bcrypt from 'bcrypt';
 
 import User from './models/User.js';
@@ -58,6 +59,109 @@ passport.use(
     verifyLocalUser
   )
 );
+
+// --- Auth0 helpers ---
+function getAuth0Config() {
+  const { AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_CALLBACK_URL } = process.env;
+
+  if (!AUTH0_DOMAIN || !AUTH0_CLIENT_ID || !AUTH0_CLIENT_SECRET || !AUTH0_CALLBACK_URL) {
+    return null;
+  }
+
+  return {
+    domain: AUTH0_DOMAIN,
+    clientID: AUTH0_CLIENT_ID,
+    clientSecret: AUTH0_CLIENT_SECRET,
+    callbackURL: AUTH0_CALLBACK_URL,
+  };
+}
+
+function getAuth0Email(profile) {
+  return profile?.emails?.[0]?.value || profile?._json?.email || '';
+}
+
+function getAuth0Nickname(profile) {
+  return profile?.nickname || profile?.displayName || '';
+}
+
+function normalizeUsernameBase(value) {
+  if (!value) {
+    return 'auth0user';
+  }
+
+  return value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '') || 'auth0user';
+}
+
+async function buildUniqueUsername(base) {
+  const cleanedBase = normalizeUsernameBase(base);
+  let candidate = cleanedBase;
+  let counter = 1;
+
+  while (await User.findOne({ usernameLower: candidate })) {
+    counter += 1;
+    candidate = `${cleanedBase}${counter}`;
+  }
+
+  return candidate;
+}
+
+async function findOrCreateAuth0User(profile) {
+  const auth0Id = profile?.id;
+
+  if (!auth0Id) {
+    throw new Error('Auth0 profile missing id.');
+  }
+
+  const existingUser = await User.findOne({ auth0Id });
+
+  if (existingUser) {
+    return existingUser;
+  }
+
+  const email = getAuth0Email(profile);
+
+  if (!email) {
+    throw new Error('Auth0 profile missing email.');
+  }
+
+  const emailLower = email.toLowerCase();
+  const existingEmailUser = await User.findOne({ emailLower });
+
+  if (existingEmailUser) {
+    existingEmailUser.auth0Id = auth0Id;
+    await existingEmailUser.save();
+    return existingEmailUser;
+  }
+
+  const usernameBase = getAuth0Nickname(profile) || email.split('@')[0];
+  const usernameLower = await buildUniqueUsername(usernameBase);
+
+  return User.create({
+    auth0Id,
+    username: usernameLower,
+    usernameLower,
+    email,
+    emailLower,
+  });
+}
+
+async function verifyAuth0User(accessToken, refreshToken, extraParams, profile, done) {
+  try {
+    const user = await findOrCreateAuth0User(profile);
+    return done(null, user);
+  } catch (error) {
+    return done(error);
+  }
+}
+
+// Auth0 strategy setup (only when env vars are present)
+const auth0Config = getAuth0Config();
+
+if (auth0Config) {
+  passport.use(new Auth0Strategy(auth0Config, verifyAuth0User));
+} else {
+  console.warn('Auth0 is not configured. Skipping Auth0 strategy.');
+}
 
 // Store user id in session
 passport.serializeUser((user, done) => {

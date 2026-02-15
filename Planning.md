@@ -264,16 +264,16 @@ Plan:
 
 Checklist:
 
-- [ ] Install Auth0 Passport strategy (example: `passport-auth0`)
+- [x] Install Auth0 Passport strategy (example: `passport-auth0`)
 - [x] Add `.env.example` variables (Auth0 domain, client id/secret, callback URL)
-- [ ] Add routes:
+- [x] Add routes:
   - `GET /auth/auth0`
   - `GET /auth/auth0/callback`
-- [ ] Link Auth0 user to User model
+- [x] Link Auth0 user to User model
 
 Definition of Done:
 
-- I can log in using Auth0 and see my notes area
+- [x] I can log in using Auth0 and see my notes area
 
 ---
 

@@ -1,8 +1,15 @@
 // User model and schema
 import mongoose from 'mongoose';
 
+// User schema fields 
 const userSchema = new mongoose.Schema(
   {
+    auth0Id: {
+      type: String,
+      unique: true,
+      sparse: true,
+      index: true,
+    },
     username: { type: String, required: true, trim: true },
     usernameLower: {
       type: String,
