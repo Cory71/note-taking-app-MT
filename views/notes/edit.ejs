@@ -1,0 +1,53 @@
+<!-- Section: Page layout partials -->
+<%- include('../partials/header', { title: 'Edit Note' }) %> <!-- Shared head/meta/styles -->
+<%- include('../partials/nav', { currentUser }) %> <!-- Nav with current user context -->
+
+<!-- Section: Edit note form page -->
+<main class="container pb-4">
+  <h1 class="h3 mb-3">Edit Note</h1>
+
+  <% if (error) { %> <!-- Show validation error when save fails -->
+    <div class="alert alert-danger" role="alert"><%= error %></div>
+  <% } %>
+
+  <section class="card mb-3">
+    <div class="card-body">
+      <!-- Section: Edit form -->
+      <form method="POST" action="/notes/<%= note._id %>" data-form-type="note"> <!-- Save changes to this note id -->
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input
+            id="title"
+            name="title"
+            type="text"
+            class="form-control"
+            maxlength="200"
+            value="<%= note.title %>"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="content" class="form-label">Content</label>
+          <textarea
+            id="content"
+            name="content"
+            class="form-control"
+            rows="7"
+            maxlength="5000"
+          ><%= note.content %></textarea>
+        </div>
+
+        <p class="text-danger mb-3" data-form-error></p>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <a href="/notes" class="btn btn-outline-secondary">Cancel</a> <!-- Back to notes list without saving -->
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<!-- Section: Shared scripts/footer partial -->
+<%- include('../partials/footer', { includeValidationScript: true }) %> <!-- Load shared scripts + note form validation -->

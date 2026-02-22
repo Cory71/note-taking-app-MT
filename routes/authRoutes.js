@@ -7,16 +7,16 @@ import { handleLogout, handleRegister, showLogin, showRegister } from '../contro
 const router = express.Router();
 
 // Registration routes
-router.get('/register', showRegister);
-router.post('/register', handleRegister);
+router.get('/register', showRegister); // Show register page.
+router.post('/register', handleRegister); // Submit register form.
 
 // Login routes
-router.get('/login', showLogin);
+router.get('/login', showLogin); // Show login page.
 router.post(
   '/login',
   passport.authenticate('local', {
-    failureRedirect: '/login?error=1',
-    successRedirect: '/',
+    failureRedirect: '/login?error=1', // Re-open login page when credentials fail.
+    successRedirect: '/notes', // Go to notes on success.
   })
 );
 
@@ -25,18 +25,18 @@ router.get(
   '/auth/auth0',
   passport.authenticate('auth0', {
     scope: 'openid email profile',
-    prompt: 'login',
+    prompt: 'login', // Always show provider login prompt.
   })
 );
 router.get(
   '/auth/auth0/callback',
   passport.authenticate('auth0', {
-    failureRedirect: '/login?error=1',
-    successRedirect: '/',
+    failureRedirect: '/login?error=1', // Send user back to login if Auth0 fails.
+    successRedirect: '/notes', // Go to notes after Auth0 login.
   })
 );
 
 // Logout route
-router.post('/logout', handleLogout);
+router.post('/logout', handleLogout); // End current user session.
 
 export default router;

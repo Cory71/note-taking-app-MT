@@ -8,6 +8,7 @@ import './passport.js';
 import authRoutes from './routes/authRoutes.js';
 import indexRoutes from './routes/indexRoutes.js';
 import noteApiRoutes from './routes/noteApiRoutes.js';
+import noteRoutes from './routes/noteRoutes.js';
 
 const app = express();
 
@@ -19,11 +20,11 @@ function getRequiredEnvVar(name) {
 		throw new Error(`Missing ${name}. Add it to your .env file.`);
 	}
 
-	return value;
+	return value; // Return the env value once validated.
 }
 
 function buildSessionOptions() {
-	const sessionSecret = getRequiredEnvVar('SESSION_SECRET');
+	const sessionSecret = getRequiredEnvVar('SESSION_SECRET'); // Keep session secret in env, not code.
 
 	return {
 		secret: sessionSecret,
@@ -31,39 +32,40 @@ function buildSessionOptions() {
 		saveUninitialized: false,
 		cookie: {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === 'production',
+			secure: process.env.NODE_ENV === 'production', // Use secure cookie only in production (HTTPS).
 		},
 	};
 }
 
 function configureSessions(appInstance) {
-	appInstance.use(session(buildSessionOptions()));
+	appInstance.use(session(buildSessionOptions())); // Turn on login session support.
 }
 
 function configurePassport(appInstance) {
-	appInstance.use(passport.initialize());
-	appInstance.use(passport.session());
+	appInstance.use(passport.initialize()); // Enable Passport on every request.
+	appInstance.use(passport.session()); // Read logged-in user from the session.
 }
 
 // View engine setup (EJS)
 app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(express.static('public'));
+app.use(express.urlencoded({ extended: false })); // Read form POST data.
+app.use(express.json()); // Read JSON request bodies.
+app.use(express.static('public')); // Serve browser files like CSS and JS.
 
 // Sessions + Passport
 configureSessions(app);
 configurePassport(app);
 
-app.use('/', indexRoutes);
-app.use('/', authRoutes);
-app.use('/api/notes', noteApiRoutes);
+app.use('/', indexRoutes); // Home and simple page routes.
+app.use('/', authRoutes); // Register/login/logout routes.
+app.use('/', noteRoutes); // Notes page/form routes.
+app.use('/api/notes', noteApiRoutes); // JSON API routes for notes.
 
 // --- Global error handler (friendly messages) ---
 function isApiRequest(req) {
-	return req.originalUrl?.startsWith('/api/');
+	return req.originalUrl?.startsWith('/api/'); // Route API errors to JSON responses.
 }
 
 function sendApiError(res, statusCode, message) {

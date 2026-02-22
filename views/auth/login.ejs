@@ -1,41 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
-  </head>
-  <body>
-    <h1>Login</h1>
+<!-- Section: Page layout partials -->
+<%- include('../partials/header', { title: 'Login' }) %> <!-- Shared head/meta/styles -->
+<%- include('../partials/nav', { currentUser: null }) %> <!-- Render guest nav for auth page -->
 
-    <% if (error) { %>
-      <p style="color: red;"><%= error %></p>
-    <% } %>
+<!-- Section: Login page card -->
+<main class="container pb-4 auth-page">
+  <section class="card mx-auto auth-card auth-login-card">
+    <div class="card-body">
+      <h1 class="h4 mb-3 text-center">Login</h1>
 
-    <form method="POST" action="/login">
-      <label for="usernameOrEmail">Username or Email</label>
-      <input
-        id="usernameOrEmail"
-        name="usernameOrEmail"
-        type="text"
-        value="<%= values.usernameOrEmail %>"
-        required
-      />
+      <% if (error) { %> <!-- Show login error from server -->
+        <div class="alert alert-danger" role="alert"><%= error %></div>
+      <% } %>
 
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password" required />
+      <!-- Section: Login form -->
+      <form method="POST" action="/login" data-form-type="login"> <!-- Browser  uses this to run login checks -->
+        <div class="mb-3">
+          <label for="usernameOrEmail" class="form-label visually-hidden">Username or Email</label>
+          <input
+            id="usernameOrEmail"
+            name="usernameOrEmail"
+            type="text"
+            class="form-control auth-input"
+            placeholder="Username or Email"
+            value="<%= values.usernameOrEmail %>"
+            required
+          />
+        </div>
 
-      <button type="submit">Log In</button>
-    </form>
+        <div class="mb-3">
+          <label for="password" class="form-label visually-hidden">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            class="form-control auth-input"
+            placeholder="Password"
+            required
+          />
+        </div>
 
-    <p>
-      Or use a third-party login:
-      <a href="/auth/auth0">Log in with Auth0</a>
-    </p>
+        <div class="form-check mb-3"> <!-- Optional show/hide password toggle -->
+          <input
+            id="showPasswordToggle"
+            type="checkbox"
+            class="form-check-input"
+            data-password-toggle
+            data-password-target="#password"
+          />
+          <label for="showPasswordToggle" class="form-check-label">Show password</label>
+        </div>
 
-    <p>
-      Need an account?
-      <a href="/register">Register here</a>
-    </p>
-  </body>
-</html>
+        <p class="text-danger mb-3" data-form-error></p>
+
+        <button type="submit" class="btn btn-primary w-100 auth-submit-btn">Login</button> <!-- Send form to /login -->
+      </form>
+
+      <hr />
+
+      <!-- Section: Third-party login shortcut -->
+      <a href="/auth/auth0" class="btn btn-outline-primary w-100 auth-provider-btn mb-3">Sign in with Auth0</a> <!-- Optional social login path -->
+
+      <p class="mb-0 text-center">
+        Need an account?
+        <a href="/register">Register here</a>
+      </p>
+    </div>
+  </section>
+</main>
+
+<!-- Section: Shared scripts/footer partial -->
+<%- include('../partials/footer', { includeValidationScript: true }) %> <!-- Load shared scripts + validation -->

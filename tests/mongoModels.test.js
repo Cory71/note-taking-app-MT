@@ -13,15 +13,15 @@ const mongoUri =
 // Connect to the test database before running tests
 before(async () => {
   if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(mongoUri);
+    await mongoose.connect(mongoUri); // Connect once for this test file.
   }
 });
 
 // Clean up: drop the test database and disconnect after tests
 after(async () => {
   if (mongoose.connection.readyState === 1) {
-    await mongoose.connection.dropDatabase();
-    await mongoose.disconnect();
+    await mongoose.connection.dropDatabase(); // Remove test data after tests.
+    await mongoose.disconnect(); // Close DB connection cleanly.
   }
 });
 
@@ -50,6 +50,6 @@ describe('Mongo models', () => {
     // Find the note by userId and check its title
     const found = await Note.findOne({ userId: user._id });
     expect(found).to.exist;
-    expect(found.title).to.equal('First note');
+    expect(found.title).to.equal('First note'); // Verify saved note data is retrievable.
   });
 });

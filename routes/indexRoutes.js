@@ -5,14 +5,16 @@ import { ensureAuthPage } from '../middleware/ensureAuth.js';
 
 const router = express.Router();
 
-// Responds with 'OK' to confirm the server is running
+// Render home page
 router.get('/', (req, res) => {
-  res.send('OK');
+  res.render('index', {
+    currentUser: req.user || null, // Pass user info to nav/header when logged in.
+  });
 });
 
 // Simple protected route to confirm auth middleware works
 router.get('/protected', ensureAuthPage, (req, res) => {
-  res.send('You are logged in.');
+  res.send('You are logged in.'); // Quick check route for auth middleware.
 });
 
 export default router;

@@ -13,13 +13,13 @@ import {
 const router = express.Router();
 
 // --- Protect all note API routes ---
-router.use(ensureAuthApi);
+router.use(ensureAuthApi); // Require auth for all /api/notes endpoints.
 
 // --- Notes CRUD endpoints ---
-router.get('/', listNotes);
-router.get('/:id', getNoteById);
-router.post('/', createNote);
-router.put('/:id', updateNote);
-router.delete('/:id', deleteNote);
+router.get('/', listNotes); // Get all notes for logged-in user.
+router.get('/:id', getNoteById); // Get one note by id.
+router.post('/', createNote); // Create a new note.
+router.put('/:id', updateNote); // Full note update endpoint.
+router.delete('/:id', deleteNote); // Delete one note.
 
 export default router;

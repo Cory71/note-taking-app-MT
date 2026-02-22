@@ -1,0 +1,31 @@
+<!-- Section: Shared top navigation bar -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4">
+  <div class="container">
+    <a class="navbar-brand" href="/">Pen Points</a> <!-- Brand link returns to home -->
+
+    <div class="d-flex flex-column align-items-end gap-2">
+      <!-- Section: Auth buttons and welcome text area -->
+      <div class="d-flex gap-2 align-items-center">
+        <% if (currentUser) { %> <!-- Logged-in nav actions -->
+          <span class="welcome-message">Welcome, <%= currentUser.username || currentUser.email %></span>
+          <a class="btn btn-outline-primary btn-sm" href="/notes">My Notes</a>
+          <form method="POST" action="/logout" class="m-0"> <!-- Use POST so logout only happens on button click -->
+            <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+          </form>
+        <% } else { %> <!-- Guest nav actions -->
+          <a class="btn btn-primary btn-sm nav-auth-login" href="/login">Login</a>
+          <a class="btn btn-light btn-sm nav-auth-register" href="/register">Register</a>
+        <% } %>
+      </div>
+
+      <!-- Section: Theme toggle area -->
+      <div class="theme-toggle" title="Toggle dark mode">
+        <span class="theme-toggle-label">Dark mode</span>
+        <label class="switch" aria-label="Toggle dark mode">
+          <input type="checkbox" id="themeToggle" /> <!-- Used by /public/ui.js theme script -->
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+</nav>

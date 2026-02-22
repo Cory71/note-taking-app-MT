@@ -41,10 +41,14 @@ This project aims to assess your understanding of:
 
 ### Front End (HTML/EJS + CSS)
 
-- [ ] Design a simple and user-friendly front-end interface for the Note-Taking App using **HTML or EJS** and **CSS**.
-- [ ] Integrate the front end with the back end to:
+- [x] Design a simple and user-friendly front-end interface for the Note-Taking App using **HTML or EJS** and **CSS**.
+- [x] Integrate the front end with the back end to:
   - display existing notes
   - allow users to add, edit, and delete notes
+- [x] Design a simple and user-friendly front-end interface for the Note-Taking App using **HTML or EJS** and **CSS**.
+- [x] Integrate the front end with the back end to:
+- display existing notes
+- allow users to add, edit, and delete notes
 
 ### Authentication + Authorization
 
@@ -53,8 +57,10 @@ This project aims to assess your understanding of:
 
 ### Validation
 
-- [ ] Implement server-side validation for incoming data.
-- [ ] Provide clear error messages to the front end for invalid requests or validation failures.
+- [x] Implement server-side validation for incoming data.
+- [x] Provide clear error messages to the front end for invalid requests or validation failures.
+- [x] Implement server-side validation for incoming data.
+- [x] Provide clear error messages to the front end for invalid requests or validation failures.
 
 ## Deliverable
 

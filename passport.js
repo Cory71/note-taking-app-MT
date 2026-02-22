@@ -12,20 +12,20 @@ function toLowerTrimmed(value) {
     return '';
   }
 
-  return value.trim().toLowerCase();
+  return value.trim().toLowerCase(); // Make login checks ignore spaces and case.
 }
 
 // Find a user by username or email (lowercased)
 async function findUserByLogin(loginLower) {
   return User.findOne({
-    $or: [{ usernameLower: loginLower }, { emailLower: loginLower }],
+    $or: [{ usernameLower: loginLower }, { emailLower: loginLower }], // Allow username or email login.
   });
 }
 
 // Verify a login attempt using the local strategy
 async function verifyLocalUser(usernameOrEmail, password, done) {
   try {
-    const loginLower = toLowerTrimmed(usernameOrEmail);
+    const loginLower = toLowerTrimmed(usernameOrEmail); // Normalize login for case-insensitive lookup.
 
     if (!loginLower) {
       return done(null, false, { message: 'Missing login value.' });
@@ -34,10 +34,10 @@ async function verifyLocalUser(usernameOrEmail, password, done) {
     const user = await findUserByLogin(loginLower);
 
     if (!user || !user.passwordHash) {
-      return done(null, false, { message: 'Invalid credentials.' });
+      return done(null, false, { message: 'Invalid credentials.' }); // Same message avoids leaking account details.
     }
 
-    const matches = await bcrypt.compare(password, user.passwordHash);
+    const matches = await bcrypt.compare(password, user.passwordHash); // Compare plain password to stored hash.
 
     if (!matches) {
       return done(null, false, { message: 'Invalid credentials.' });
@@ -65,7 +65,7 @@ function getAuth0Config() {
   const { AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_CALLBACK_URL } = process.env;
 
   if (!AUTH0_DOMAIN || !AUTH0_CLIENT_ID || !AUTH0_CLIENT_SECRET || !AUTH0_CALLBACK_URL) {
-    return null;
+    return null; // Skip Auth0 strategy when env vars are missing.
   }
 
   return {
@@ -89,7 +89,7 @@ function normalizeUsernameBase(value) {
     return 'auth0user';
   }
 
-  return value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '') || 'auth0user';
+  return value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '') || 'auth0user'; // Keep username simple and safe.
 }
 
 async function buildUniqueUsername(base) {
@@ -99,7 +99,7 @@ async function buildUniqueUsername(base) {
 
   while (await User.findOne({ usernameLower: candidate })) {
     counter += 1;
-    candidate = `${cleanedBase}${counter}`;
+    candidate = `${cleanedBase}${counter}`; // Try next number until username is free.
   }
 
   return candidate;
@@ -124,11 +124,11 @@ async function findOrCreateAuth0User(profile) {
     throw new Error('Auth0 profile missing email.');
   }
 
-  const emailLower = email.toLowerCase();
+  const emailLower = email.toLowerCase(); // Save lowercase email for unique matching.
   const existingEmailUser = await User.findOne({ emailLower });
 
   if (existingEmailUser) {
-    existingEmailUser.auth0Id = auth0Id;
+    existingEmailUser.auth0Id = auth0Id; // Link existing local account to Auth0.
     await existingEmailUser.save();
     return existingEmailUser;
   }
@@ -158,21 +158,19 @@ async function verifyAuth0User(accessToken, refreshToken, extraParams, profile, 
 const auth0Config = getAuth0Config();
 
 if (auth0Config) {
-  passport.use(new Auth0Strategy(auth0Config, verifyAuth0User));
-} else {
-  console.warn('Auth0 is not configured. Skipping Auth0 strategy.');
+  passport.use(new Auth0Strategy(auth0Config, verifyAuth0User)); // Register Auth0 login only when configured.
 }
 
 // Store user id in session
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.id); // Save only user id in session.
 });
 
 // Restore user from session
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
-    done(null, user);
+    done(null, user); // Rebuild full user object for each request.
   } catch (error) {
     done(error);
   }

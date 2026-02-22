@@ -1,0 +1,62 @@
+<!-- Section: Page layout partials -->
+<%- include('partials/header', { title: 'Home' }) %> <!-- Shared head/meta/styles -->
+<%- include('partials/nav', { currentUser }) %> <!-- Nav changes based on login state -->
+
+<!-- Section: Home page split layout -->
+<main class="container">
+  <div class="row g-4 align-items-stretch justify-content-center home-panels-row">
+    <div class="col-12 col-lg-auto d-flex">
+      <section class="p-4 bg-light rounded-3 border home-main-panel">
+        <h1 class="h3">Note Taking App</h1>
+        <p class="mb-3">Create and manage your personal notes.</p>
+
+        <% if (currentUser) { %> <!-- Logged-in users see quick link to notes -->
+          <p class="mb-3">You are logged in as <strong><%= currentUser.username %></strong>.</p>
+          <a href="/notes" class="btn btn-primary">Go to My Notes</a> <!-- Fast path for logged-in users -->
+        <% } else { %> <!-- Guests see login/register choices -->
+          <p class="mb-3">Log in or register to start saving notes.</p>
+          <div class="d-flex gap-2 flex-wrap">
+            <a href="/login" class="btn btn-primary me-2">Log In</a>
+            <a href="/register" class="btn btn-outline-secondary">Register</a>
+          </div>
+        <% } %>
+
+        <!-- Section: Home card logo area -->
+        <div class="home-main-panel-logo-wrap" aria-hidden="true">
+          <img
+            src="/images/pen-points-logo.png"
+            alt=""
+            class="home-main-panel-logo"
+            loading="lazy"
+          /> <!-- Decorative logo image -->
+        </div>
+      </section>
+    </div>
+
+    <!-- Section: Home page feature panel -->
+    <div class="col-12 col-lg-auto d-flex">
+      <section class="p-4 bg-light rounded-3 border home-feature-panel">
+        <h2 class="h5 mb-3">Why you will like it</h2>
+
+        <!-- Section: Feature list -->
+        <ul class="list-group list-group-flush mb-3">
+          <li class="list-group-item px-0 bg-transparent">Create notes in seconds</li>
+          <li class="list-group-item px-0 bg-transparent">Pin important notes to the top</li>
+          <li class="list-group-item px-0 bg-transparent">Drag to reorder pinned notes</li>
+          <li class="list-group-item px-0 bg-transparent">Use light or dark mode anytime</li>
+        </ul>
+
+        <!-- Section: Simple example panel -->
+        <div class="card">
+          <div class="card-body">
+            <h3 class="h6 mb-2">Example note</h3>
+            <p class="mb-0 text-body-secondary">Plan tomorrow tasks, then pin the top priority.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- Section: Shared scripts/footer partial -->
+<%- include('partials/footer', { includeValidationScript: false }) %> <!-- Home page does not need form validation -->

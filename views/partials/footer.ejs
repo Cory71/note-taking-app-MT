@@ -1,0 +1,23 @@
+    <!-- Section: Minimal page footer -->
+    <footer class="app-footer">
+      <small>Pen Points · 2026</small>
+    </footer>
+
+    <!-- Section: Bootstrap JavaScript bundle -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Section: Global UI script (theme toggle) -->
+    <script src="/ui.js"></script> <!-- Global UI behavior (theme toggle) -->
+    <% if (includeValidationScript) { %> <!-- Only load when a page has forms -->
+      <!-- Section: Client-side form validation script -->
+      <script src="/validation.js"></script> <!-- Form validation for auth/note forms -->
+    <% } %>
+    <% if (typeof includeNotesUiScript !== 'undefined' && includeNotesUiScript) { %> <!-- Only load on notes page -->
+      <!-- Section: Notes page drag/drop and flash message behavior -->
+      <script src="/notes-ui.js"></script> <!-- Notes page drag/drop + flash dismiss -->
+    <% } %>
+  </body>
+</html>

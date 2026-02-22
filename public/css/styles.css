@@ -1,4 +1,607 @@
-/* Phase 1 placeholder */
+/* Section: App base styles */
 body {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: linear-gradient(
+    135deg,
+    var(--bs-blue) 0%,
+    var(--bs-primary) 25%,
+    var(--bs-indigo) 60%,
+    var(--bs-purple) 100%
+  );
+  min-height: 100vh; /* Keep gradient covering full viewport height. */
+  display: flex;
+  flex-direction: column;
+  transition: background 0.2s ease;
 }
+
+/* Section: Top navigation style */
+.navbar {
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(8px); /* Slight blur gives a glass-style nav look. */
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.08);
+}
+
+.navbar-brand {
+  font-weight: 600;
+  font-size: 1.9rem;
+  letter-spacing: 0.01em;
+}
+
+.welcome-message {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: none;
+}
+
+.theme-toggle-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--bs-secondary-color);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px; /* Size of dark-mode toggle switch. */
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #cfd4da;
+  transition: 0.2s;
+  border-radius: 999px;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: #ffffff;
+  transition: 0.2s;
+  border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+  background: linear-gradient(45deg, var(--bs-primary), var(--bs-indigo));
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* Section: Dark mode */
+body.dark {
+  color: #e9ecef;
+  background: linear-gradient(135deg, #111827 0%, #0f172a 100%); /* Dark page background. */
+}
+
+body.dark .navbar {
+  background: rgba(17, 24, 39, 0.92) !important;
+}
+
+body.dark .navbar-brand,
+body.dark .welcome-message,
+body.dark .theme-toggle-label {
+  color: #e9ecef;
+}
+
+body.dark .card,
+body.dark .bg-light.rounded-3.border {
+  background: rgba(17, 24, 39, 0.92) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #e9ecef;
+}
+
+body.dark .text-muted {
+  color: #cbd5e1 !important;
+}
+
+body.dark .form-control {
+  background-color: rgba(15, 23, 42, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #e9ecef;
+}
+
+body.dark .form-control::placeholder {
+  color: #94a3b8;
+}
+
+body.dark .modal-content {
+  background: rgba(17, 24, 39, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #e9ecef;
+}
+
+body.dark .modal-header,
+body.dark .modal-footer {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+body.dark .modal-title,
+body.dark .modal-body {
+  color: #e9ecef;
+}
+
+body.dark .modal .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Section: Main content containers */
+main.container {
+  margin-top: 4rem;
+}
+
+/* Section: Notes page (logged in) layout */
+.notes-page {
+  max-width: 1200px;
+}
+
+.notes-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.12); /* Lift top bar from background. */
+}
+
+.notes-title {
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.notes-flash {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  border-radius: 0.65rem;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.notes-flash.is-hiding {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+/* Section: Hide the create form until the user clicks “+ Add Note” (or validation fails) */
+.notes-create {
+  display: none;
+}
+
+.notes-create:target,
+.notes-create.notes-create--open {
+  display: block; /* Show form when hash target or validation error exists. */
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* Desktop: three columns. */
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 992px) {
+  .notes-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .notes-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.note-card {
+  margin: 0;
+}
+
+.note-card[data-is-pinned='true']:hover {
+  cursor: grab;
+}
+
+.note-card[data-is-pinned='true']:active {
+  cursor: grabbing;
+}
+
+.note-card[data-is-pinned='false'] {
+  cursor: default;
+}
+
+.note-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.note-title {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-title-wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  min-width: 0;
+  gap: 0.35rem;
+}
+
+/* Section: Pinned note color tuning */
+.notes-page .badge.text-bg-warning {
+  background-color: rgba(var(--bs-warning-rgb), 0.72) !important; /* Keep yellow visible without being overly bright. */
+  color: var(--bs-dark) !important; /* Improve text contrast inside the badge. */
+  border: 1px solid rgba(var(--bs-warning-rgb), 1); /* Preserve clear badge edge on dark cards. */
+  font-weight: 700; /* Make "Pinned" label easier to scan quickly. */
+}
+
+.note-date {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--bs-secondary-color);
+  white-space: nowrap;
+}
+
+.note-card-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.note-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.note-actions .btn {
+  padding-inline: 1rem;
+}
+
+/* Section: Pin/Unpin button emphasis */
+.notes-page .note-actions .btn-outline-warning {
+  --bs-btn-color: var(--bs-warning-text-emphasis); /* Keep default state readable on dark background. */
+  --bs-btn-border-color: rgba(var(--bs-warning-rgb), 0.9); /* Match border to tuned pinned yellow. */
+  --bs-btn-hover-color: var(--bs-warning-text-emphasis);
+  --bs-btn-hover-bg: rgba(var(--bs-warning-rgb), 0.72); /* Use same yellow tone on hover for consistency. */
+  --bs-btn-hover-border-color: rgba(var(--bs-warning-rgb), 1);
+  font-weight: 600; /* Slightly bolder button text for readability. */
+}
+
+/* Section: Window-style note expand button */
+.note-size-btn {
+  width: 2.2rem;
+  min-width: 2.2rem;
+  height: 1.65rem;
+  padding: 0;
+  border-radius: 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  line-height: 1;
+}
+
+.note-size-btn--corner {
+  margin-left: auto;
+}
+
+/* Section: Note maximize/minimize display */
+body.note-overlay-open {
+  overflow: hidden;
+}
+
+body.note-overlay-open::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 1035;
+}
+
+.note-card.note-card--maximized {
+  position: fixed;
+  top: 5.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(960px, calc(100vw - 2rem));
+  max-height: calc(100vh - 7rem);
+  overflow: auto;
+  z-index: 1045;
+  cursor: default;
+}
+
+.note-card.note-card--maximized .note-content-preview {
+  display: block;
+  white-space: pre-wrap;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.note-card.note-card--maximized .note-title-wrap {
+  flex-wrap: wrap;
+}
+
+.note-card.note-card--maximized .note-title {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+@media (max-width: 768px) {
+  .note-card.note-card--maximized {
+    top: 5rem;
+    max-height: calc(100vh - 6rem);
+  }
+}
+
+/* Section: Card look to match reference style */
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 1rem;
+  box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.12);
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+/* Section: Home hero panel */
+.bg-light.rounded-3.border {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.12);
+}
+
+.home-main-panel {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-feature-panel {
+  width: 100%;
+  max-width: 420px;
+}
+
+.home-main-panel-logo-wrap {
+  margin-top: auto;
+  min-height: 170px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.home-main-panel-logo {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.95;
+}
+
+body.dark .home-main-panel h1,
+body.dark .home-feature-panel h2,
+body.dark .home-feature-panel h3 {
+  color: #f8fafc;
+}
+
+body.dark .home-main-panel p,
+body.dark .home-feature-panel p,
+body.dark .home-feature-panel .text-body-secondary {
+  color: #cbd5e1 !important;
+}
+
+body.dark .home-main-panel-logo {
+  filter: brightness(1.15) saturate(1.1) drop-shadow(0 0.2rem 0.5rem rgba(59, 130, 246, 0.35));
+  opacity: 0.98;
+}
+
+body.dark .home-feature-panel .list-group-item {
+  background: transparent;
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+body.dark .home-feature-panel .card {
+  background: rgba(15, 23, 42, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+@media (max-width: 991.98px) {
+  .home-main-panel,
+  .home-feature-panel {
+    max-width: 100%;
+  }
+
+  .home-main-panel-logo-wrap {
+    min-height: 130px;
+  }
+}
+
+/* Section: Buttons */
+.btn {
+  border-radius: 999px;
+  font-weight: 600; /* Slightly bolder text for button readability. */
+}
+
+.btn-danger {
+  background-color: rgba(var(--bs-danger-rgb), 0.82);
+  border-color: rgba(var(--bs-danger-rgb), 0.82);
+  color: var(--bs-white);
+}
+
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+  background-color: rgba(var(--bs-danger-rgb), 0.95) !important;
+  border-color: rgba(var(--bs-danger-rgb), 0.95) !important;
+  color: var(--bs-white) !important;
+}
+
+/* Section: Auth pages */
+.auth-card {
+  max-width: 560px;
+}
+
+/* Section: Login page style to match reference screenshot */
+.auth-page {
+  min-height: calc(100vh - 170px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-login-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.auth-login-card .card-body {
+  padding: 1.5rem;
+}
+
+.auth-login-card h1 {
+  font-weight: 700;
+  color: #2f4156;
+}
+
+.auth-input {
+  border-radius: 0.45rem;
+  font-size: 0.92rem;
+}
+
+.auth-input::placeholder {
+  color: #8b95a5;
+}
+
+.notes-add-btn,
+.auth-submit-btn,
+.nav-auth-login {
+  background: linear-gradient(90deg, var(--bs-primary) 0%, var(--bs-indigo) 100%);
+  border: 0;
+}
+
+.auth-login-card .form-check-label {
+  font-size: 0.72rem;
+  color: var(--bs-secondary-color);
+}
+
+.auth-login-card .form-check-input {
+  margin-top: 0.18rem;
+}
+
+.nav-auth-register {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.dark .auth-login-card {
+  background: rgba(17, 24, 39, 0.94);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark .auth-login-card h1 {
+  color: #e9ecef;
+}
+
+body.dark .auth-input {
+  background-color: rgba(15, 23, 42, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #e9ecef;
+}
+
+body.dark .auth-login-card .form-check-label {
+  color: #cbd5e1;
+}
+
+body.dark .nav-auth-register {
+  background: #e2e8f0;
+}
+
+@media (max-width: 576px) {
+  .auth-page {
+    min-height: calc(100vh - 145px);
+  }
+
+  .auth-login-card {
+    max-width: 100%;
+  }
+}
+
+/* Section: Notes list */
+.note-content-preview {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Trim long note text with ... in card view. */
+  color: var(--bs-secondary-color);
+  font-size: 0.9rem;
+}
+
+body.dark .notes-topbar {
+  background: rgba(17, 24, 39, 0.92);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+body.dark .note-date,
+body.dark .note-content-preview {
+  color: #cbd5e1;
+}
+
+/* Section: Shared page footer */
+.app-footer {
+  margin: 2.25rem 0 1.25rem;
+  margin-top: auto; /* Push footer to bottom when page content is short. */
+  text-align: center;
+  color: rgba(15, 23, 42, 0.72);
+}
+
+.app-footer small {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+body.dark .app-footer {
+  color: rgba(226, 232, 240, 0.72);
+}
+

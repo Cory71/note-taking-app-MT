@@ -243,14 +243,14 @@ Checklist:
 
 Note:
 
-- [ ] UI pages: show errors by re-rendering the EJS page with a simple message. (Phase 7)
+- [x] UI pages: show errors by re-rendering the EJS page with a simple message. (Phase 7)
 - [x] API: show errors with `res.status(...).json({ error: { message } })`.
 - [x] EJS escapes output by default with `<%= %>`, which helps prevent unsafe HTML injection, but I should still trim/limit input and avoid rendering raw HTML.
 
 Definition of Done:
 
 - [x] Invalid requests never crash the server
-- [ ] The front end can display messages from the server (Phase 7)
+- [x] The front end can display messages from the server (Phase 7)
 
 ---
 
@@ -290,18 +290,18 @@ Pages:
 
 Checklist:
 
-- [ ] Add EJS views + partials (header/nav/footer)
-- [ ] Add Bootstrap via CDN
-- [ ] Add `public/validation.js` and include it on pages with forms (login/register/notes)
-- [ ] Show success/error messages on pages using a simple convention (ex: pass `error` / `success` into `res.render`)
-- [ ] Add `GET /notes` route that renders the notes list + create form (EJS)
-- [ ] Protect `GET /notes` with `ensureAuthPage` (redirect to login if not logged in)
-- [ ] Add `GET /notes/:id/edit` route (renders edit form)
-- [ ] Add simple form submit routes:
+- [x] Add EJS views + partials (header/nav/footer)
+- [x] Add Bootstrap via CDN
+- [x] Add `public/validation.js` and include it on pages with forms (login/register/notes)
+- [x] Show success/error messages on pages using a simple convention (ex: pass `error` / `success` into `res.render`)
+- [x] Add `GET /notes` route that renders the notes list + create form (EJS)
+- [x] Protect `GET /notes` with `ensureAuthPage` (redirect to login if not logged in)
+- [x] Add `GET /notes/:id/edit` route (renders edit form)
+- [x] Add simple form submit routes:
   - `POST /notes` (create)
   - `POST /notes/:id` (update)
   - `POST /notes/:id/delete` (delete)
-- [ ] Keep UI simple and clean
+- [x] Keep UI simple and clean
 
 Definition of Done:
 
