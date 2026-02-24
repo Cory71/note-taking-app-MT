@@ -45,10 +45,6 @@ This project aims to assess your understanding of:
 - [x] Integrate the front end with the back end to:
   - display existing notes
   - allow users to add, edit, and delete notes
-- [x] Design a simple and user-friendly front-end interface for the Note-Taking App using **HTML or EJS** and **CSS**.
-- [x] Integrate the front end with the back end to:
-- display existing notes
-- allow users to add, edit, and delete notes
 
 ### Authentication + Authorization
 
@@ -59,13 +55,11 @@ This project aims to assess your understanding of:
 
 - [x] Implement server-side validation for incoming data.
 - [x] Provide clear error messages to the front end for invalid requests or validation failures.
-- [x] Implement server-side validation for incoming data.
-- [x] Provide clear error messages to the front end for invalid requests or validation failures.
 
 ## Deliverable
 
-- [ ] Create a `README` file with clear instructions on setting up the project locally.
-- [ ] Document:
+- [x] Create a `README` file with clear instructions on setting up the project locally.
+- [x] Document:
   - the API endpoints
   - expected request/response formats
   - any important details for developers who may use or contribute to your project

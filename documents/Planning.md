@@ -254,7 +254,7 @@ Definition of Done:
 
 ---
 
-### Phase 6 — Auth0 Login (Day 4–5)
+### Phase 6 — Auth0 Login
 
 **Goal:** at least one third-party login works using Auth0.
 
@@ -277,7 +277,7 @@ Definition of Done:
 
 ---
 
-### Phase 7 — Front End (EJS + Bootstrap) (Day 5–6)
+### Phase 7 — Front End (EJS + Bootstrap)
 
 **Goal:** usable UI for notes CRUD using EJS + form submits.
 
@@ -316,20 +316,20 @@ Note:
 
 ---
 
-### Phase 8 — Final Polish + Documentation (Day 6–7)
+### Phase 8 — Final Polish + Documentation
 
 **Goal:** project is easy to run and easy to grade.
 
 Checklist:
 
-- [ ] `README.md` includes:
+- [x] `README.md` includes:
   - install steps
   - `.env` variables needed
   - how to run (`npm start`)
   - API endpoints with example request/response
-- [ ] Add “What I learned / difficulties” notes
-- [ ] Confirm nothing sensitive is committed
-- [ ] Confirm all major features work end-to-end
+- [x] Add “What I learned / difficulties” notes
+- [x] Confirm nothing sensitive is committed
+- [x] Confirm all major features work end-to-end
 
 Definition of Done:
 
