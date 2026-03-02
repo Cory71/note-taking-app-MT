@@ -9,6 +9,7 @@ import {
   isOwner,
   loadUserNotes,
   normalizeNoteInput,
+  normalizeNoteSearchInput,
   sendApiError,
   validateNoteInput,
 } from './noteShared.js';
@@ -60,7 +61,8 @@ function assignNoteContent(note, normalizedNote) {
 export async function listNotes(req, res, next) {
   try {
     const userId = getUserId(req);
-    const notes = await loadUserNotes(userId); // Return pinned manual order, then unpinned newest first.
+    const search = normalizeNoteSearchInput(req.query); // Support API filtering with the same q/scope contract as the page.
+    const notes = await loadUserNotes(userId, search); // Return pinned manual order, then unpinned newest first.
     return res.json({ notes });
   } catch (error) {
     return next(error);

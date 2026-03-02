@@ -8,6 +8,7 @@ import {
   createNote,
   deleteNote,
   getNoteById,
+  listNotes,
   updateNote,
 } from '../controllers/noteController.js';
 
@@ -37,11 +38,12 @@ function createUserId() {
   return new mongoose.Types.ObjectId(); // Generate test user ids without creating User docs.
 }
 
-function buildReq({ userId, body = {}, params = {} }) {
+function buildReq({ userId, body = {}, params = {}, query = {} }) {
   return {
     user: { _id: userId }, // Minimal req.user shape expected by controllers.
     body,
     params,
+    query,
   };
 }
 
@@ -192,5 +194,37 @@ describe('Note API validation and ownership', () => {
     expect(data.jsonBody.error.message).to.equal(
       'You do not have access to this note.'
     );
+  });
+
+  it('filters listNotes by title when query and title scope are provided', async () => {
+    const userId = createUserId();
+
+    await Note.create({ userId, title: 'Grocery List', content: 'Milk and eggs' });
+    await Note.create({ userId, title: 'Trip Ideas', content: 'Visit mountains' });
+
+    const req = buildReq({ userId, query: { q: 'grocery', scope: 'title' } }); // Search should only inspect title in this case.
+    const { res, data } = createResponseRecorder();
+
+    await listNotes(req, res, createNextThrower());
+
+    expect(data.statusCode).to.equal(200);
+    expect(data.jsonBody.notes).to.have.length(1); // Only one title should match.
+    expect(data.jsonBody.notes[0].title).to.equal('Grocery List');
+  });
+
+  it('filters listNotes by content when query and content scope are provided', async () => {
+    const userId = createUserId();
+
+    await Note.create({ userId, title: 'Daily Plan', content: 'Deep work block' });
+    await Note.create({ userId, title: 'Workout', content: 'Push day session' });
+
+    const req = buildReq({ userId, query: { q: 'push', scope: 'content' } }); // Search should only inspect content in this case.
+    const { res, data } = createResponseRecorder();
+
+    await listNotes(req, res, createNextThrower());
+
+    expect(data.statusCode).to.equal(200);
+    expect(data.jsonBody.notes).to.have.length(1); // Only one note body should match.
+    expect(data.jsonBody.notes[0].title).to.equal('Workout');
   });
 });

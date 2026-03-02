@@ -71,7 +71,7 @@ REST API (JSON) for requirement/testing:
 
 ## Project Structure (MVC)
 
-Suggested folder layout:
+Current folder layout (as of now):
 
 - `server.js` (starts server + connects DB)
 - `app.js` (configures Express app, middleware, routes)
@@ -84,26 +84,43 @@ Suggested folder layout:
   - `noteRoutes.js` (notes pages: `GET /notes`, `GET /notes/:id/edit`, form submits)
   - `noteApiRoutes.js` (notes CRUD API: `/api/notes`)
 - `controllers/`
-  - `authController.js`
-  - `noteController.js` (note logic; can be shared by pages + API)
+  - `authController.js` (register/login/logout handlers + Auth0 callback helpers)
+  - `noteShared.js` (shared helpers: validation, search, ownership checks)
+  - `noteApiController.js` (JSON API handlers used by `/api/notes` routes)
+  - `notePageController.js` (EJS page + form-submit handlers used by `/notes` routes)
+  - `noteController.js` (barrel file that re-exports page + API handlers)
 - `models/`
-  - `User.js`
-  - `Note.js`
+  - `User.js` (user schema: username/email/password hash + auth fields)
+  - `Note.js` (note schema: title/content/userId + timestamps/order/pin state)
 - `views/`
-  - `index.ejs`
+  - `index.ejs` (home/landing page)
   - `auth/`
-    - `login.ejs`
-    - `register.ejs`
+    - `login.ejs` (login form)
+    - `register.ejs` (registration form)
   - `notes/` (notes pages)
     - `index.ejs` (list + create form)
     - `edit.ejs` (edit form)
-  - `partials/` (header/nav/footer)
+  - `partials/` (shared layout)
+    - `header.ejs` (shared `<head>` + Bootstrap CSS include)
+    - `nav.ejs` (top nav bar + auth buttons + theme toggle)
+    - `footer.ejs` (footer + Bootstrap JS bundle include)
 - `public/`
-  - `css/styles.css`
+  - `css/styles.css` (custom app styling layered on top of Bootstrap)
+  - `images/`
+    - `pen-points-logo.png` (app logo asset)
+  - `ui.js` (global UI behavior like theme toggle)
+  - `notes-ui.js` (notes page UI behavior)
   - `validation.js` (client-side form validation)
+- `tests/`
+  - `mongoModels.test.js` (basic model/schema sanity checks)
+  - `noteApiValidation.test.js` (API validation/edge-case tests for notes)
+  - `serverRootRoute.test.js` (server boots + `GET /` route test)
+- `documents/`
+  - `MtInstructions.md` (assignment/instructor notes and requirements)
+  - `Planning.md` (project plan + decisions + structure)
 - `.env` (NOT committed)
 - `.env.example` (safe template)
-- `README.md`
+- `README.md` (setup/run instructions)
 
 ---
 
@@ -177,7 +194,7 @@ Checklist:
 
 Note:
 
-- It’s listed in the folder layout for completeness, but I will actually create `middleware/ensureAuth.js` during **Phase 3**.
+- It’s listed in the folder layout for completeness, and it is created during **Phase 3**.
 
 Definition of Done:
 
@@ -201,7 +218,7 @@ Routes (example):
 Checklist:
 
 - [x] Build `routes/noteApiRoutes.js`
-- [x] Build `controllers/noteController.js`
+- [x] Build note controllers (`controllers/noteApiController.js`, `controllers/noteShared.js`, and `controllers/noteController.js` as a barrel export)
 - [x] Protect all note API routes with `ensureAuthApi`
 - [x] Add ownership checks: user can only access their own notes
 - [x] Use scoped queries in controllers (example: `{ _id: id, userId: req.user._id }`)
@@ -334,6 +351,42 @@ Checklist:
 Definition of Done:
 
 - A classmate can clone, configure `.env`, and run locally
+
+---
+
+### Phase 9 — Extended Deadline Enhancements
+
+**Goal:** improve notes-page usability and navigation after the extension window.
+
+Checklist:
+
+- [x] Add server-side note search with query params:
+  - [x] `q` (search text)
+  - [x] `scope` (`all`, `title`, `content`)
+- [x] Reuse one shared search normalization/filter flow across page and API controllers
+- [x] Add Bootstrap search controls to the notes header bar
+- [x] Move search controls into the same top bar as notes navigation actions
+- [x] Move `All Notes` action from top navbar to the notes page bar for easier return from filtered views
+- [x] Align top bar layout for cleaner left/right grouping and responsive behavior
+- [x] Tune search control sizing so the header aligns tighter with the note card grid
+- [x] Update `All Notes` active-state styling behavior:
+  - [x] blue when full notes list is showing
+  - [x] lighter style when a filtered/search view is showing
+- [x] Add/adjust inline comments for new logic and updated UI areas
+- [x] Add API tests for scoped search filtering (`title` and `content`)
+- [x] Run tests and confirm all pass
+
+Definition of Done:
+
+- Search works from both UI and API using the same rules
+- Notes header navigation is easier when moving between filtered results and full list
+- Test suite remains green after all enhancements
+
+---
+
+## Future Enhancement (If More Time Is Available)
+
+- Add user-defined organizational folders so notes can be grouped into custom categories (for example: School, Work, Personal) while preserving current ownership and validation rules.
 
 ---
 

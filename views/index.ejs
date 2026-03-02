@@ -12,7 +12,7 @@
 
         <% if (currentUser) { %> <!-- Logged-in users see quick link to notes -->
           <p class="mb-3">You are logged in as <strong><%= currentUser.username %></strong>.</p>
-          <a href="/notes" class="btn btn-primary">Go to My Notes</a> <!-- Fast path for logged-in users -->
+          <a href="/notes" class="btn btn-primary">Go to All Notes</a> <!-- Fast path for logged-in users -->
         <% } else { %> <!-- Guests see login/register choices -->
           <p class="mb-3">Log in or register to start saving notes.</p>
           <div class="d-flex gap-2 flex-wrap">

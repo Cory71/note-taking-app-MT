@@ -10,6 +10,7 @@ import {
   isValidNoteIdList,
   loadUserNotes,
   normalizeNoteInput,
+  normalizeNoteSearchInput,
   validateNoteInput,
 } from './noteShared.js';
 
@@ -47,6 +48,7 @@ function buildNotesIndexViewModel({
   error = '',
   success = '',
   values = { title: '', content: '' },
+  search = { q: '', scope: 'all' },
 }) {
   return {
     currentUser: req.user || null,
@@ -54,6 +56,7 @@ function buildNotesIndexViewModel({
     error,
     success,
     values,
+    search,
   };
 }
 
@@ -75,12 +78,13 @@ function renderEditPage(res, statusCode, viewModel) {
 
 async function renderNotesIndexWithError(req, res, statusCode, errorMessage) {
   const userId = getUserId(req);
-  const notes = await loadUserNotes(userId); // Keep note list visible when showing error.
+  const search = normalizeNoteSearchInput(req.query); // Preserve active search when rendering error states.
+  const notes = await loadUserNotes(userId, search); // Keep note list visible when showing error.
 
   return renderNotesIndex(
     res,
     statusCode,
-    buildNotesIndexViewModel({ req, notes, error: errorMessage })
+    buildNotesIndexViewModel({ req, notes, error: errorMessage, search })
   );
 }
 
@@ -145,14 +149,15 @@ async function findOwnedNoteOrRenderError(req, res) {
 export async function showNotesPage(req, res, next) {
   try {
     const userId = getUserId(req);
-    const notes = await loadUserNotes(userId);
+    const search = normalizeNoteSearchInput(req.query); // Read q/scope from URL query string.
+    const notes = await loadUserNotes(userId, search); // Apply user-scoped search before rendering page.
     const error = getNotesErrorMessage(req.query);
     const success = getNotesSuccessMessage(req.query);
 
     return renderNotesIndex(
       res,
       200,
-      buildNotesIndexViewModel({ req, notes, error, success })
+      buildNotesIndexViewModel({ req, notes, error, success, search })
     );
   } catch (error) {
     return next(error);

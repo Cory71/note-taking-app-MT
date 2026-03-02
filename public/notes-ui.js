@@ -319,8 +319,40 @@
     });
   }
 
+  // Section: Auto-retract search scope dropdown when left open.
+  // How this works:
+  // 1) When the dropdown gets focus, start a 4-second timer.
+  // 2) If the user picks an option (or closes the dropdown), clear the timer.
+  // 3) If no selection is made in 4 seconds, blur the dropdown to close it.
+  function setupSearchScopeAutoRetract() {
+    const searchScope = document.getElementById('searchScope');
+
+    if (!searchScope) {
+      return;
+    }
+
+    let timerId;
+
+    searchScope.addEventListener('focus', () => {
+      window.clearTimeout(timerId); // Reset timer if user focuses again.
+
+      timerId = window.setTimeout(() => {
+        searchScope.blur(); // Close/retract dropdown after 4 seconds.
+      }, 4000);
+    });
+
+    searchScope.addEventListener('change', () => {
+      window.clearTimeout(timerId); // Stop timer when user picks an option.
+    });
+
+    searchScope.addEventListener('blur', () => {
+      window.clearTimeout(timerId); // Stop timer when dropdown closes.
+    });
+  }
+
   setupDragAndDrop();
   setupCardSizeToggle();
   setupDeleteConfirmation();
   setupSingleNoteSelection();
+  setupSearchScopeAutoRetract();
 })();

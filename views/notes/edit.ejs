@@ -1,6 +1,6 @@
 <!-- Section: Page layout partials -->
 <%- include('../partials/header', { title: 'Edit Note' }) %> <!-- Shared head/meta/styles -->
-<%- include('../partials/nav', { currentUser }) %> <!-- Nav with current user context -->
+<%- include('../partials/nav', { currentUser, hideMyNotesNavButton: true }) %> <!-- Hide top-nav My Notes button on notes pages. -->
 
 <!-- Section: Edit note form page -->
 <main class="container pb-4">

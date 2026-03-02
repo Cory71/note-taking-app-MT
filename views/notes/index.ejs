@@ -1,12 +1,41 @@
 <!-- Section: Page layout partials -->
 <%- include('../partials/header', { title: 'My Notes' }) %> <!-- Shared head/meta/styles -->
-<%- include('../partials/nav', { currentUser }) %> <!-- Nav with current user context -->
+<%- include('../partials/nav', { currentUser, hideMyNotesNavButton: true }) %> <!-- Hide top-nav My Notes button on notes pages. -->
 
 <!-- Section: Notes page top area -->
 <main class="container pb-4 notes-page">
   <section class="notes-topbar mb-4">
-    <h1 class="notes-title m-0">My Notes</h1>
-    <a class="btn btn-primary btn-sm notes-add-btn" href="#create-note">+ Add Note</a> <!-- Opens create section via anchor -->
+    <div class="notes-topbar-left">
+      <h1 class="notes-title m-0">My Notes</h1>
+      <a class="btn <%= search.q ? 'btn-outline-primary' : 'btn-primary' %> btn-sm" href="/notes">All Notes</a> <!-- Blue on full list, lighter when search filtering is active. -->
+      <a class="btn btn-primary btn-sm notes-add-btn" href="#create-note">+ Add Note</a> <!-- Opens create section via anchor. -->
+    </div>
+
+    <!-- Section: Streamlined topbar search controls (right side on desktop) -->
+    <form method="GET" action="/notes" class="notes-topbar-search" role="search">
+      <input
+        id="searchQuery"
+        name="q"
+        type="text"
+        class="form-control form-control-sm"
+        maxlength="100"
+        value="<%= search.q %>"
+        placeholder="Search notes"
+        aria-label="Search notes"
+      /> <!-- Keep the query in the input so users can refine searches quickly. -->
+      <select
+        id="searchScope"
+        name="scope"
+        class="form-select form-select-sm"
+        aria-label="Search scope"
+      > <!-- Scope dropdown narrows search target field. -->
+        <option value="all" <%= search.scope === 'all' ? 'selected' : '' %>>All</option>
+        <option value="title" <%= search.scope === 'title' ? 'selected' : '' %>>Title</option>
+        <option value="content" <%= search.scope === 'content' ? 'selected' : '' %>>Content</option>
+      </select>
+      <button type="submit" class="btn btn-outline-primary btn-sm">Search</button>
+      <a href="/notes" class="btn btn-outline-secondary btn-sm">Clear</a> <!-- Clear resets both query and selected scope. -->
+    </form>
   </section>
 
   <% if (error) { %> <!-- Show page-level error message -->
@@ -59,7 +88,11 @@
   <!-- Section: Saved notes section -->
   <section>
     <% if (!notes.length) { %>
-      <p class="text-muted">No notes yet. Create your first one above.</p>
+      <% if (search.q) { %>
+        <p class="text-muted">No notes matched your search.</p>
+      <% } else { %>
+        <p class="text-muted">No notes yet. Create your first one above.</p>
+      <% } %>
     <% } %>
 
     <div class="notes-grid" id="notesGrid">
@@ -115,10 +148,10 @@
               </div>
               <time
                 class="note-date"
-                datetime="<%= note.updatedAt ? note.updatedAt.toISOString() : '' %>"
+                datetime="<%= note.createdAt ? note.createdAt.toISOString() : '' %>"
               >
-                <%= new Date(note.updatedAt || note.createdAt).toLocaleDateString() %>
-              </time> <!-- Keep machine-readable date for accessibility/tools. -->
+                <%= new Date(note.createdAt).toLocaleDateString() %>
+              </time> <!-- Always show the note's original creation date. -->
             </div>
           </div>
         </article>

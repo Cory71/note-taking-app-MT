@@ -4,13 +4,18 @@ A full-stack note-taking app built with Node.js, Express, MongoDB, EJS, and Pass
 
 ## Project Planning (Kanban)
 
-- GitHub Projects board: <https://github.com/users/Cory71/projects/3>
+GitHub Projects board: [View the project board](https://github.com/users/Cory71/projects/3)
+
+Tip: Use Ctrl+Click (or middle-click) to open the board in a new tab.
+
+For a more detailed breakdown of the project structure, phases, and tasks, see `documents/Planning.md`.
 
 ## Features
 
 - User accounts with login/logout (Passport Local)
 - Optional third-party login with Auth0 (Passport Auth0)
 - Notes CRUD (create, read, update, delete)
+- Scoped notes search (all/title/content) on UI and API
 - Authorization: users can only access their own notes
 - Server-side validation with clear error messages
 - Simple EJS UI for managing notes
@@ -135,13 +140,18 @@ Login details (Local Strategy):
 
 Notes pages (protected by `ensureAuthPage`):
 
-- `GET /notes` - list notes + create form
+- `GET /notes` - list notes + create form (supports optional search query params: `q`, `scope`)
 - `GET /notes/:id/edit` - edit note page
 - `POST /notes` - create note (form submit)
 - `POST /notes/:id` - update note (form submit)
 - `POST /notes/:id/delete` - delete note (form submit)
 - `POST /notes/:id/pin` - toggle pin/unpin
 - `POST /notes/reorder` - save pinned note order (JSON response)
+
+Notes UI search/navigation behavior:
+
+- Search controls appear in the notes page header bar.
+- `All Notes` returns from a filtered/search view to the full notes list.
 
 Auth0 (optional):
 
@@ -207,6 +217,18 @@ Common status codes:
 ### `GET /api/notes`
 
 List notes for the logged-in user.
+
+Optional query params:
+
+- `q` - search text (trimmed on server, max 100 chars)
+- `scope` - one of `all`, `title`, `content` (defaults to `all`)
+
+Examples:
+
+- `/api/notes` (all notes)
+- `/api/notes?q=meeting&scope=all`
+- `/api/notes?q=meeting&scope=title`
+- `/api/notes?q=meeting&scope=content`
 
 Response `200`:
 
@@ -325,13 +347,15 @@ curl -s -b cookies.txt http://localhost:3000/api/notes
 - **Planning first helped a lot.** I used a small phased plan (see `documents/Planning.md`) and a Kanban board to avoid getting stuck and to keep the work split into manageable tasks.
 - **MVC kept the app readable.** Keeping routes thin and moving logic into controllers made it easier to debug and to add features without rewriting everything.
 - **Shared validation reduced bugs.** Using the same note normalization + validation rules for both the EJS forms and the JSON API helped keep behavior consistent.
-- **Authorization is enforced server-side.** Ownership checks ensure users can only read/update/delete their own notes, which is a real-world requirement even for a simple app.
+- **Server-side authorization stayed strong.** Ownership checks kept users limited to reading/updating/deleting only their own notes, which reflects a real-world requirement even in a simple app.
+- **Search/navigation UX iteration worked well.** After identifying confusion around returning from filtered results, moving `All Notes` and search controls into the notes header made the flow clearer.
 
 ### Challenges
 
 - **Session-based API testing.** Because the API uses login sessions (cookies), API testing requires logging in first and then sending requests with saved cookies.
 - **Handling invalid MongoDB ids.** Invalid ObjectId values can throw CastErrors; normalizing those to a clean `404` response makes the API/UI feel more predictable.
 - **Keeping UI and API behavior consistent.** The UI uses redirects + rendered EJS pages, while the API uses JSON + status codes; it took extra care to keep validation rules and ownership checks identical in both places.
+- **Search-state navigation clarity.** When filtered search results were visible, the original top-nav placement made returning to the full notes list less obvious; I addressed this by moving `All Notes` into the notes header and refining its active/inactive state.
 - **Ordering pinned notes.** Designing a sort order that feels natural (pinned notes first with manual drag order, then unpinned newest-first) required thinking through how to store and query `order` without making the code too complex.
 - **Duplicate user handling (race conditions).** Even after checking for an existing user, MongoDB can still throw a duplicate key error if two registrations happen at nearly the same time; catching `11000` errors and returning a friendly message improved reliability.
 - **Auth0 being optional.** Making Auth0 “plug in when configured” meant the app had to behave correctly both with and without those environment variables set.
@@ -351,3 +375,7 @@ curl -s -b cookies.txt http://localhost:3000/api/notes
 
 - Breaking the project into small steps (plan → build → test) made it much easier to finish without feeling too overwhelmed.
 - Doing validation and authorization on the server made the app safer and more reliable.
+
+### Future enhancement (if more time was available)
+
+- Add user-defined organizational folders so notes can be grouped by custom categories while keeping the current ownership, validation, and API design patterns.
