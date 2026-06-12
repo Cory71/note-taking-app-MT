@@ -8,7 +8,7 @@
       <div class="d-flex gap-2 align-items-center">
         <% if (currentUser) { %> <!-- Logged-in nav actions -->
           <span class="welcome-message">Welcome, <%= currentUser.username || currentUser.email %></span>
-          <% if (!hideMyNotesNavButton) { %>
+          <% if (!locals.hideMyNotesNavButton) { %> <!-- Read via locals so pages that omit this flag don't crash -->
             <a class="btn btn-outline-primary btn-sm" href="/notes">All Notes</a>
           <% } %> <!-- Allow notes pages to move this button into the notes header bar. -->
           <form method="POST" action="/logout" class="m-0"> <!-- Use POST so logout only happens on button click -->
