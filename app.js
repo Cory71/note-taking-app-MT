@@ -6,7 +6,6 @@ import passport from 'passport';
 import MongoStore from 'connect-mongo';
 
 import './passport.js';
-import { apiLimiter } from './middleware/rateLimit.js';
 import authRoutes from './routes/authRoutes.js';
 import indexRoutes from './routes/indexRoutes.js';
 import noteApiRoutes from './routes/noteApiRoutes.js';
@@ -81,7 +80,7 @@ configurePassport(app);
 app.use('/', indexRoutes); // Home and simple page routes.
 app.use('/', authRoutes); // Register/login/logout routes.
 app.use('/', noteRoutes); // Notes page/form routes.
-app.use('/api/notes', apiLimiter, noteApiRoutes); // JSON API routes for notes (rate limited).
+app.use('/api/notes', noteApiRoutes); // JSON API routes for notes.
 
 // --- Global error handler (friendly messages) ---
 function isApiRequest(req) {

@@ -3,19 +3,17 @@ import express from 'express';
 import passport from 'passport';
 
 import { handleLogout, handleRegister, showLogin, showRegister } from '../controllers/authController.js';
-import { authLimiter } from '../middleware/rateLimit.js';
 
 const router = express.Router();
 
 // Registration routes
 router.get('/register', showRegister); // Show register page.
-router.post('/register', authLimiter, handleRegister); // Submit register form (rate limited).
+router.post('/register', handleRegister); // Submit register form.
 
 // Login routes
 router.get('/login', showLogin); // Show login page.
 router.post(
   '/login',
-  authLimiter, // Slow down repeated login attempts (credential stuffing).
   passport.authenticate('local', {
     failureRedirect: '/login?error=1', // Re-open login page when credentials fail.
     successRedirect: '/notes', // Go to notes on success.
@@ -25,7 +23,6 @@ router.post(
 // Auth0 routes
 router.get(
   '/auth/auth0',
-  authLimiter, // Limit how often the Auth0 flow can be started.
   passport.authenticate('auth0', {
     scope: 'openid email profile',
     prompt: 'login', // Always show provider login prompt.
