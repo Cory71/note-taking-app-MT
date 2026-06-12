@@ -38,7 +38,7 @@ export function buildSessionStore(mongoUri) {
 		return undefined;
 	}
 
-	return MongoStore.create({ mongoUrl: mongoUri }); // Store sessions in MongoDB.
+	return MongoStore.create({ mongoUrl: mongoUri });
 }
 
 function buildSessionOptions() {
