@@ -113,19 +113,45 @@
     return validateCurrentForm ? validateCurrentForm(form) : ''; // Skip unknown form types safely.
   }
 
-  // Section: Stop submit and show message when validation fails.
+  // Section: Show a spinner and disable a button while its action is in progress.
+  function setButtonLoading(button) {
+    if (button.hasAttribute('data-loading')) {
+      return; // Already loading: do not stack spinners or allow double submits.
+    }
+
+    button.setAttribute('data-loading', 'true');
+    button.setAttribute('data-original-html', button.innerHTML); // Save label to restore later.
+    button.innerHTML =
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading…';
+
+    if (button.tagName === 'BUTTON') {
+      button.disabled = true; // Native disable for form submit buttons.
+    } else {
+      button.classList.add('disabled');
+      button.setAttribute('aria-disabled', 'true'); // Visual + accessibility disable for links.
+    }
+  }
+
+  // Section: Stop submit and show message when validation fails;
+  // otherwise show a loading state on the submit button.
   function handleFormSubmit(event) {
     const form = event.currentTarget;
     setFormError(form, '');
 
     const errorMessage = validateForm(form);
 
-    if (!errorMessage) {
+    if (errorMessage) {
+      event.preventDefault();
+      setFormError(form, errorMessage);
       return;
     }
 
-    event.preventDefault();
-    setFormError(form, errorMessage);
+    // Validation passed: the form is about to submit normally, so show the spinner.
+    const submitButton = form.querySelector('[type="submit"]');
+
+    if (submitButton) {
+      setButtonLoading(submitButton);
+    }
   }
 
   // Section: Attach submit validation handlers to all tagged forms.
