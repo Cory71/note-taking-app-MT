@@ -154,6 +154,61 @@
     }
   }
 
+  // Section: Show a loading state when a provider login link (e.g. Auth0) is clicked.
+  function handleProviderClick(event) {
+    const link = event.currentTarget;
+
+    if (link.hasAttribute('data-loading')) {
+      event.preventDefault(); // Block repeat clicks while already navigating.
+      return;
+    }
+
+    setButtonLoading(link); // Navigation proceeds; spinner shows until the next page loads.
+  }
+
+  // Section: Attach the loading behavior to provider login links.
+  function setupProviderButtons() {
+    const links = document.querySelectorAll('.auth-provider-btn');
+
+    for (const link of links) {
+      link.addEventListener('click', handleProviderClick);
+    }
+  }
+
+  // Section: Clear a loading button back to its original label and enabled state.
+  function clearButtonLoading(button) {
+    const originalHtml = button.getAttribute('data-original-html');
+
+    if (originalHtml !== null) {
+      button.innerHTML = originalHtml; // Restore the saved label.
+    }
+
+    button.removeAttribute('data-loading');
+    button.removeAttribute('data-original-html');
+
+    if (button.tagName === 'BUTTON') {
+      button.disabled = false;
+    } else {
+      button.classList.remove('disabled');
+      button.removeAttribute('aria-disabled');
+    }
+  }
+
+  // Section: Reset stale spinners if the page is restored from the back/forward cache.
+  function setupBfcacheReset() {
+    window.addEventListener('pageshow', (event) => {
+      if (!event.persisted) {
+        return; // Only needed when the page comes back from bfcache.
+      }
+
+      const loadingButtons = document.querySelectorAll('[data-loading]');
+
+      for (const button of loadingButtons) {
+        clearButtonLoading(button);
+      }
+    });
+  }
+
   // Section: Attach submit validation handlers to all tagged forms.
   function setupFormValidation() {
     const forms = document.querySelectorAll('form[data-form-type]');
@@ -196,4 +251,6 @@
 
   setupFormValidation();
   setupPasswordToggle();
+  setupProviderButtons();
+  setupBfcacheReset();
 })();
