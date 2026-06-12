@@ -39,12 +39,19 @@ migration).
 
 ## 3. Finish Auth0 setup
 
+> **Important:** The Auth0 application must be a **Regular Web Application** (not a
+> Single Page App). This app uses server-side login (`passport-auth0`), which
+> authenticates the token exchange with the client secret. A SPA-type app will fail
+> the Auth0 callback with `access_denied`. Also make sure `AUTH0_CLIENT_SECRET`
+> exactly matches the value shown in the Auth0 application settings.
+
 1. In the Auth0 dashboard → your application → **Settings**.
-2. Add to **Allowed Callback URLs**:
+2. Confirm **Application Type** is **Regular Web Application**.
+3. Add to **Allowed Callback URLs**:
    `https://<your-app>.onrender.com/auth/auth0/callback`
-3. Add to **Allowed Logout URLs** and **Allowed Web Origins**:
+4. Add to **Allowed Logout URLs** and **Allowed Web Origins**:
    `https://<your-app>.onrender.com`
-4. Save changes.
+5. Save changes.
 
 ## 4. Verify the live app
 
