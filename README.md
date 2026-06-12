@@ -2,6 +2,12 @@
 
 A full-stack note-taking app built with Node.js, Express, MongoDB, EJS, and Passport authentication (Local strategy + optional Auth0).
 
+## Live Demo
+
+**[https://note-taking-app-mt.onrender.com](https://note-taking-app-mt.onrender.com)**
+
+Hosted on Render (free tier) with MongoDB Atlas. Note: the free instance sleeps after about 15 minutes of inactivity, so the first request after a while can take ~50 seconds to wake up. You can register a local account or use "Sign in with Auth0".
+
 ## Project Planning (Kanban)
 
 GitHub Projects board: [View the project board](https://github.com/users/Cory71/projects/3)
@@ -20,15 +26,20 @@ For a more detailed breakdown of the project structure, phases, and tasks, see `
 - Server-side validation with clear error messages
 - Simple EJS UI for managing notes
 - REST API at `/api/notes` for grading/testing
+- Automatic dark/light theme that follows the operating system setting, with a manual toggle override
+- Loading spinners on the login, register, and Auth0 buttons for clear feedback during slow requests
+- Persistent login sessions stored in MongoDB (survive server restarts), via `connect-mongo`
 
 ## Tech Stack
 
 - Runtime: Node.js
 - Server: Express
-- DB: MongoDB + Mongoose
+- DB: MongoDB + Mongoose (local MongoDB for development, MongoDB Atlas in production)
+- Sessions: `express-session` with `connect-mongo` (sessions stored in MongoDB)
 - Views: EJS
 - Auth: Passport (`passport-local`, optional `passport-auth0`)
 - Tests: Mocha + Chai
+- Hosting: Render (free tier)
 
 ## Project Structure (MVC)
 
@@ -106,6 +117,26 @@ npm start
 Then open:
 
 - `http://localhost:3000/`
+
+## Deployment (MongoDB Atlas + Render)
+
+The live app runs on Render with a MongoDB Atlas database. Because the app reads its
+connection string from `MONGODB_URI`, moving from local MongoDB to Atlas only requires
+changing that value to an Atlas `mongodb+srv://...` string — no code changes.
+
+For full step-by-step instructions (creating the Atlas cluster, the Render web service,
+the environment variables, and the Auth0 production callback URL), see
+[`DEPLOYMENT.md`](DEPLOYMENT.md).
+
+Production notes:
+
+- Render provides the `PORT` automatically; do not set it yourself.
+- Set `NODE_ENV=production` so secure session cookies are enabled. The app calls
+  `app.set('trust proxy', 1)` so those cookies work behind Render's HTTPS proxy.
+- Use a long, unique `SESSION_SECRET` in production (separate from your local one).
+- For Auth0 in production, add the Render callback URL
+  (`https://<your-app>.onrender.com/auth/auth0/callback`) to the Auth0 dashboard's
+  Allowed Callback URLs and set `AUTH0_CALLBACK_URL` to match.
 
 ## Tests
 
@@ -339,6 +370,8 @@ curl -s -b cookies.txt http://localhost:3000/api/notes
 
 - The app expects `SESSION_SECRET` to be set; `app.js` throws an error if it is missing.
 - Auth0 is enabled only when all Auth0 env vars are present.
+- Sessions are stored in MongoDB (via `connect-mongo`) when `MONGODB_URI` is set; without it, the app falls back to an in-memory store (used for local runs and tests).
+- In production the app trusts the first proxy hop (`app.set('trust proxy', 1)`) so the secure session cookie is set correctly behind Render's HTTPS proxy.
 
 ## Reflection (Development Notes + Lessons Learned)
 
