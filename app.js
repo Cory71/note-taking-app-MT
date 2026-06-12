@@ -3,6 +3,7 @@ import path from 'path';
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
+import MongoStore from 'connect-mongo';
 
 import './passport.js';
 import authRoutes from './routes/authRoutes.js';
@@ -11,6 +12,11 @@ import noteApiRoutes from './routes/noteApiRoutes.js';
 import noteRoutes from './routes/noteRoutes.js';
 
 const app = express();
+
+// Render terminates HTTPS at its proxy and forwards plain HTTP. Trusting the
+// first proxy hop lets Express know the original request was secure, so the
+// secure session cookie is set correctly in production.
+app.set('trust proxy', 1);
 
 // --- Sessions + Passport setup helpers ---
 function getRequiredEnvVar(name) {
@@ -23,11 +29,24 @@ function getRequiredEnvVar(name) {
 	return value; // Return the env value once validated.
 }
 
+// Build a MongoDB-backed session store so logins survive restarts.
+// Returns undefined when no database is configured, which makes
+// express-session fall back to its default in-memory store (used locally
+// and in tests).
+export function buildSessionStore(mongoUri) {
+	if (!mongoUri) {
+		return undefined;
+	}
+
+	return MongoStore.create({ mongoUrl: mongoUri }); // Store sessions in MongoDB.
+}
+
 function buildSessionOptions() {
 	const sessionSecret = getRequiredEnvVar('SESSION_SECRET'); // Keep session secret in env, not code.
 
 	return {
 		secret: sessionSecret,
+		store: buildSessionStore(process.env.MONGODB_URI), // Persist sessions in MongoDB when configured.
 		resave: false,
 		saveUninitialized: false,
 		cookie: {
