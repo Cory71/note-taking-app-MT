@@ -4,3 +4,8 @@ node_modules/
 npm-debug.log*
 .github/
 
+# Claude Code / AI planning files (kept out of the public portfolio repo)
+.claude/
+CLAUDE.md
+docs/superpowers/
+
