@@ -9,3 +9,6 @@ npm-debug.log*
 CLAUDE.md
 docs/superpowers/
 
+# Local tooling artifacts
+.playwright-mcp/
+
